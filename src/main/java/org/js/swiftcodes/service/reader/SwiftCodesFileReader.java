@@ -68,7 +68,8 @@ public class SwiftCodesFileReader {
 
     private static String getStringCellValue(Row row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
         return row.getCell(headers.get(columnName))
-            .getStringCellValue();
+            .getStringCellValue()
+            .trim();
     }
 
     private static String getStringCellValueUpperCase(Row row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
