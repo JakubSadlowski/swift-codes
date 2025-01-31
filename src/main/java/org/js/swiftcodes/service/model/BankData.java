@@ -13,4 +13,5 @@ public class BankData {
     private String swiftCode;
     private String codeType;
     private String timeZone;
+    private boolean isHeadquarter;
 }
