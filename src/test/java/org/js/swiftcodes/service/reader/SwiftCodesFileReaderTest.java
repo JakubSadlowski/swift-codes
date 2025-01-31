@@ -15,7 +15,7 @@ class SwiftCodesFileReaderTest {
     @Test
     void readSwiftCodesFile_Data_Read_Correctly() {
         // When
-        Map<SwiftCode, BankData> swiftCodes = SwiftCodesFileReader.readSwiftCodesFile("src/main/resources/Test_swift_codes.xlsx");
+        Map<SwiftCode, BankData> swiftCodes = SwiftCodesFileReader.readSwiftCodesFile("src/main/resources/Interns_2025_SWIFT_CODES.xlsx");
 
         // Then
         assertSwiftCode(swiftCodes, EXPECTED_BANK_DATA1, "BCHICLRMXXX");

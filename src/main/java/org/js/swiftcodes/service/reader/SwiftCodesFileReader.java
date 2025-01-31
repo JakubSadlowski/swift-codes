@@ -80,6 +80,10 @@ public class SwiftCodesFileReader {
         Map<HeaderColumnName, Integer> headers = new EnumMap<>(HeaderColumnName.class);
 
         for (Cell cell : row) {
+            String header = cell.getStringCellValue();
+            if (cell.getColumnIndex() >= HeaderColumnName.values().length && header.isBlank()) {
+                continue;
+            }
             headers.put(HeaderColumnName.getByHeader(cell.getStringCellValue()), cell.getColumnIndex());
         }
 
