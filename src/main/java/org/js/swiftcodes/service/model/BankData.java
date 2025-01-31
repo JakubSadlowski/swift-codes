@@ -1,19 +1,22 @@
 package org.js.swiftcodes.service.model;
 
+import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 public class BankData {
-    private String swiftCode;
-    private String codeType;
-    private String countryISO2Code;
-    private String name;
-    private String address;
-    private String townName;
-    private String countryName;
-    private String timeZone;
-    private boolean isHeadquarter;
-    private List<BankData> relatedBanks;
+    private final SwiftCode swiftCode;
+    private final String codeType;
+    private final String countryISO2Code;
+    private final String name;
+    private final String address;
+    private final String townName;
+    private final String countryName;
+    private final String timeZone;
+    private final boolean isHeadquarter;
+    private final List<BankData> relatedBanks = new ArrayList<>();
 }
