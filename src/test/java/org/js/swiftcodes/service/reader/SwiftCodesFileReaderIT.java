@@ -1,7 +1,9 @@
 package org.js.swiftcodes.service.reader;
 
+import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.js.swiftcodes.service.model.BankData;
 import org.js.swiftcodes.service.model.SwiftCode;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -27,6 +29,28 @@ class SwiftCodesFileReaderIT {
         assertSwiftCode(swiftCodes, EXPECTED_BANK_DATA3, "AIPOPLP1XXX");
         assertSwiftCode(swiftCodes, EXPECTED_BANK_DATA4, "BIGBPLPWXXX");
         assertSwiftCode(swiftCodes, EXPECTED_BANK_DATA5, "BIGBPLPWCUS");
+    }
+
+    @Test
+    void givenNonExistingFile_whenRead_ThenExceptionIsThrown() {
+        // Given
+        SwiftCodesFileReader fileReader = SwiftCodesFileReader.newInstance();
+
+        // When Then
+        Assertions.assertThrows(GeneralException.class, () -> {
+            fileReader.readSwiftCodesFile("non existing file");
+        });
+    }
+
+    @Test
+    void givenFileWithUnexpectedHeader_whenRead_ThenExceptionIsThrown() {
+        // Given
+        SwiftCodesFileReader fileReader = SwiftCodesFileReader.newInstance();
+
+        // When Then
+        Assertions.assertThrows(GeneralException.class, () -> {
+            fileReader.readSwiftCodesFile("src/test/resources/test_swift_codes_wrong_headers.xlsx");
+        });
     }
 
 }
