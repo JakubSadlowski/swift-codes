@@ -15,44 +15,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @CommonsLog
 public class SwiftCodesFileReader {
+    private static final String HEADQUARTER_SUFFIX = "XXX";
+
     public static SwiftCodesFileReader newInstance() {
         return new SwiftCodesFileReader();
     }
 
     public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
-        Map<SwiftCode, BankData> headquarters = filterSwiftCodeBankDataSetHeadquartersAndRemoveFromMap(bankDataMap);
-        findRelatedBanksToHeadquartersAndAddToList(headquarters, bankDataMap);
-        bankDataMap.putAll(headquarters);
+        detectHeadquarters(bankDataMap);
+        assignBranchesToHeadquarters(bankDataMap);
 
         return bankDataMap;
-    }
-
-    private static void findRelatedBanksToHeadquartersAndAddToList(Map<SwiftCode, BankData> headquarters, Map<SwiftCode, BankData> bankDataMap) {
-        Map<String, BankData> headquartersMap = new HashMap<>();
-        for (BankData headquarter : headquarters.values()) {
-            String headquarterKey = headquarter.getSwiftCode()
-                .code();
-            if (headquarterKey.length() >= 7) {
-                headquartersMap.put(headquarterKey.substring(0, 7), headquarter);
-            }
-        }
-
-        for (BankData data : bankDataMap.values()) {
-            String currentKey = data.getSwiftCode()
-                .code();
-            if (currentKey.length() >= 7 && headquartersMap.containsKey(currentKey.substring(0, 7))) {
-                headquartersMap.get(currentKey.substring(0, 7))
-                    .addRelatedBank(data);
-            }
-        }
     }
 
     private Map<SwiftCode, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {
@@ -72,32 +51,50 @@ public class SwiftCodesFileReader {
         return bankDataMap;
     }
 
-    private static Map<SwiftCode, BankData> filterSwiftCodeBankDataSetHeadquartersAndRemoveFromMap(Map<SwiftCode, BankData> bankDataMap) {
-        Map<SwiftCode, BankData> headquarters = new HashMap<>();
+    private static void detectHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+        for (BankData data : bankDataMap.values()) {
+            String code = data.getSwiftCode()
+                .code();
 
-        Set<SwiftCode> swiftCodesToRemove = new HashSet<>();
+            if (code.toUpperCase()
+                .endsWith(HEADQUARTER_SUFFIX)) {
+                data.setHeadquarter(true);
+            }
+        }
+    }
+
+    private static void assignBranchesToHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+        Map<String, BankData> headquartersMap = getHeadquartersMap(bankDataMap);
 
         for (BankData data : bankDataMap.values()) {
-            int swiftCodeLength = data.getSwiftCode()
-                .code()
-                .length();
-
-            // BIC11
-            if (swiftCodeLength == 11) {
+            if (!data.isHeadquarter()) {
                 String code = data.getSwiftCode()
                     .code();
-                if (code.substring(swiftCodeLength - 3)
-                    .equalsIgnoreCase("XXX")) {
-                    data.setHeadquarter();
-                    headquarters.put(data.getSwiftCode(), data);
-                    swiftCodesToRemove.add(data.getSwiftCode());
+                String hqCode = getHqCode(code);
+                BankData hq = headquartersMap.get(hqCode);
+
+                if (hq != null) {
+                    hq.addRelatedBank(data);
                 }
             }
         }
+    }
 
-        swiftCodesToRemove.forEach(bankDataMap::remove);
+    private static String getHqCode(String code) {
+        return code.substring(0, code.length() - HEADQUARTER_SUFFIX.length());
+    }
 
-        return headquarters;
+    private static Map<String, BankData> getHeadquartersMap(Map<SwiftCode, BankData> bankDataMap) {
+        Map<String, BankData> headquartersMap = new HashMap<>();
+        for (BankData bankData : bankDataMap.values()) {
+            if (bankData.isHeadquarter()) {
+                String code = bankData.getSwiftCode()
+                    .code();
+                String hqCode = getHqCode(code);
+                headquartersMap.put(hqCode, bankData);
+            }
+        }
+        return headquartersMap;
     }
 
     protected List<List<String>> readExcelContentIntoList(String filePath) {

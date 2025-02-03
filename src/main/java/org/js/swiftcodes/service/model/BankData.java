@@ -20,10 +20,6 @@ public class BankData {
     private boolean isHeadquarter;
     private final List<BankData> relatedBanks = new ArrayList<>();
 
-    public void setHeadquarter() {
-        isHeadquarter = true;
-    }
-
     public void addRelatedBank(BankData relatedBank) {
         relatedBanks.add(relatedBank);
     }
