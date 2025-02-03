@@ -1,6 +1,5 @@
 package org.js.swiftcodes.service.reader;
 
-import lombok.Getter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -26,6 +25,12 @@ public class SwiftCodesFileReader {
     }
 
     public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
+        Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
+
+        return bankDataMap;
+    }
+
+    private Map<SwiftCode, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = new HashMap<>();
 
         Map<HeaderColumnName, Integer> headers = null;
@@ -39,7 +44,6 @@ public class SwiftCodesFileReader {
                 bankDataMap.put(bankData.getSwiftCode(), bankData);
             }
         }
-
         return bankDataMap;
     }
 
@@ -107,39 +111,6 @@ public class SwiftCodesFileReader {
                 log.error(String.format("Failed to read file %s", filePath), e);
                 throw new GeneralException(String.format("Failed to read file %s", filePath), e);
             }
-        }
-    }
-
-    @Getter
-    private enum HeaderColumnName {
-        COUNTRY_ISO2CODE("COUNTRY ISO2 CODE"), SWIFT_CODE("SWIFT CODE"), CODE_TYPE("CODE TYPE"), NAME("NAME"), ADDRESS("ADDRESS"), TOWN_NAME("TOWN NAME"), COUNTRY_NAME("COUNTRY NAME"), TIME_ZONE(
-            "TIME ZONE");
-
-        private final String header;
-        private static final Map<String, HeaderColumnName> names = new HashMap<>();
-
-        static {
-            for (HeaderColumnName header : HeaderColumnName.values()) {
-                names.put(header.header.toUpperCase(), header);
-            }
-        }
-
-        public static HeaderColumnName getByHeader(String header) {
-            HeaderColumnName readHeader = names.get(header.toUpperCase());
-            if (readHeader == null) {
-                throw new GeneralException(String.format("Unexpected header %s", header), null);
-            }
-
-            return readHeader;
-        }
-
-        HeaderColumnName(String header) {
-            this.header = header;
-        }
-
-        @Override
-        public String toString() {
-            return "HeaderColumnName{" + "header='" + header + '\'' + '}';
         }
     }
 }
