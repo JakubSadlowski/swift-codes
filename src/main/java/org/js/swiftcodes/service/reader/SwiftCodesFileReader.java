@@ -11,48 +11,43 @@ import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.js.swiftcodes.service.model.BankData;
 import org.js.swiftcodes.service.model.SwiftCode;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CommonsLog
 public class SwiftCodesFileReader {
-    private SwiftCodesFileReader() {
+    public static SwiftCodesFileReader newInstance() {
+        return new SwiftCodesFileReader();
     }
 
-    public static Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
+    public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = new HashMap<>();
 
-        try (FileInputStream file = new FileInputStream(new File(fileName))) {
-            try (Workbook workbook = new XSSFWorkbook(file)) {
-                Sheet sheet = workbook.getSheetAt(0);
+        Map<HeaderColumnName, Integer> headers = null;
 
-                boolean isHeader = false;
-                Map<HeaderColumnName, Integer> headers = null;
-
-                for (Row row : sheet) {
-                    if (!isHeader) {
-                        headers = readHeader(row);
-                        isHeader = true;
-                    } else {
-                        BankData bankData = readData(row, headers);
-                        bankDataMap.put(bankData.getSwiftCode(), bankData);
-                    }
-                }
+        List<List<String>> rows = readExcelContentIntoList(fileName);
+        for (List<String> row : rows) {
+            if (headers == null) {
+                headers = readHeader(row);
+            } else {
+                BankData bankData = readData(row, headers);
+                bankDataMap.put(bankData.getSwiftCode(), bankData);
             }
-
-        } catch (IOException | GeneralException e) {
-            log.error(String.format("Failed to read file %s", fileName), e);
-            throw new GeneralException(String.format("Failed to read file %s", fileName), e);
         }
 
         return bankDataMap;
     }
 
-    private static BankData readData(Row row, Map<HeaderColumnName, Integer> headers) {
+    protected List<List<String>> readExcelContentIntoList(String filePath) {
+        return ExcelToListReader.readExcelContentIntoList(filePath);
+    }
+
+    private static BankData readData(List<String> row, Map<HeaderColumnName, Integer> headers) {
 
         return BankData.builder()
             .swiftCode(new SwiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE)))
@@ -66,28 +61,53 @@ public class SwiftCodesFileReader {
             .build();
     }
 
-    private static String getStringCellValue(Row row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
-        return row.getCell(headers.get(columnName))
-            .getStringCellValue()
+    private static String getStringCellValue(List<String> row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
+        return row.get(headers.get(columnName))
             .trim();
     }
 
-    private static String getStringCellValueUpperCase(Row row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
+    private static String getStringCellValueUpperCase(List<String> row, Map<HeaderColumnName, Integer> headers, HeaderColumnName columnName) {
         return getStringCellValue(row, headers, columnName).toUpperCase();
     }
 
-    private static Map<HeaderColumnName, Integer> readHeader(Row row) {
+    private static Map<HeaderColumnName, Integer> readHeader(List<String> row) {
         Map<HeaderColumnName, Integer> headers = new EnumMap<>(HeaderColumnName.class);
 
-        for (Cell cell : row) {
-            String header = cell.getStringCellValue();
-            if (cell.getColumnIndex() >= HeaderColumnName.values().length && header.isBlank()) {
+        for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+            String header = row.get(columnIndex);
+            if (columnIndex >= HeaderColumnName.values().length && header.isBlank()) {
                 continue;
             }
-            headers.put(HeaderColumnName.getByHeader(cell.getStringCellValue()), cell.getColumnIndex());
+            headers.put(HeaderColumnName.getByHeader(header), columnIndex);
         }
 
         return headers;
+    }
+
+    private static class ExcelToListReader {
+        public static List<List<String>> readExcelContentIntoList(String filePath) {
+            List<List<String>> rows = new ArrayList<>();
+            Sheet sheet = getExcelSheet(filePath);
+            for (Row row : sheet) {
+                List<String> columns = new ArrayList<>();
+                for (Cell cell : row) {
+                    columns.add(cell.getStringCellValue());
+                }
+                rows.add(columns);
+            }
+            return rows;
+        }
+
+        private static Sheet getExcelSheet(String filePath) {
+            try (FileInputStream file = new FileInputStream(filePath)) {
+                try (Workbook workbook = new XSSFWorkbook(file)) {
+                    return workbook.getSheetAt(0);
+                }
+            } catch (IOException | GeneralException e) {
+                log.error(String.format("Failed to read file %s", filePath), e);
+                throw new GeneralException(String.format("Failed to read file %s", filePath), e);
+            }
+        }
     }
 
     @Getter
