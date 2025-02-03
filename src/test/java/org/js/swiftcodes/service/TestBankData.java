@@ -16,6 +16,7 @@ public class TestBankData {
         .countryName("CHILE")
         .townName("SANTIAGO")
         .timeZone("Pacific/Easter")
+        .isHeadquarter(true)
         .build();
 
     public static final BankData EXPECTED_BANK_DATA2 = BankData.builder()
@@ -38,6 +39,7 @@ public class TestBankData {
         .countryName("POLAND")
         .townName("WROCLAW")
         .timeZone("Europe/Warsaw")
+        .isHeadquarter(true)
         .build();
 
     public static final BankData EXPECTED_BANK_DATA4 = BankData.builder()
@@ -49,6 +51,7 @@ public class TestBankData {
         .countryName("POLAND")
         .townName("WARSZAWA")
         .timeZone("Europe/Warsaw")
+        .isHeadquarter(true)
         .build();
 
     public static final BankData EXPECTED_BANK_DATA5 = BankData.builder()

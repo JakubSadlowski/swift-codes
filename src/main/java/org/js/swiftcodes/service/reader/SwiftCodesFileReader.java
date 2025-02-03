@@ -26,8 +26,27 @@ public class SwiftCodesFileReader {
 
     public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
+        filterSwiftCodeBankDataAndSetHeadquarters(bankDataMap);
 
         return bankDataMap;
+    }
+
+    private static void filterSwiftCodeBankDataAndSetHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+        for (BankData data : bankDataMap.values()) {
+            int swiftCodeLength = data.getSwiftCode()
+                .code()
+                .length();
+
+            // BIC8 and BIC11
+            if (swiftCodeLength == 8 || swiftCodeLength == 11) {
+                String code = data.getSwiftCode()
+                    .code();
+                if (code.substring(swiftCodeLength - 3)
+                    .equalsIgnoreCase("XXX")) {
+                    data.setHeadquarter();
+                }
+            }
+        }
     }
 
     private Map<SwiftCode, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {

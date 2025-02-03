@@ -17,6 +17,10 @@ public class BankData {
     private final String townName;
     private final String countryName;
     private final String timeZone;
-    private final boolean isHeadquarter;
+    private boolean isHeadquarter;
     private final List<BankData> relatedBanks = new ArrayList<>();
+
+    public void setHeadquarter() {
+        isHeadquarter = true;
+    }
 }
