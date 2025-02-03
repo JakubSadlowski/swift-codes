@@ -1,6 +1,5 @@
 package org.js.swiftcodes.service.reader;
 
-import lombok.Getter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,11 +20,21 @@ import java.util.Map;
 
 @CommonsLog
 public class SwiftCodesFileReader {
+    private static final String HEADQUARTER_SUFFIX = "XXX";
+
     public static SwiftCodesFileReader newInstance() {
         return new SwiftCodesFileReader();
     }
 
     public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
+        Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
+        detectHeadquarters(bankDataMap);
+        assignBranchesToHeadquarters(bankDataMap);
+
+        return bankDataMap;
+    }
+
+    private Map<SwiftCode, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = new HashMap<>();
 
         Map<HeaderColumnName, Integer> headers = null;
@@ -39,8 +48,53 @@ public class SwiftCodesFileReader {
                 bankDataMap.put(bankData.getSwiftCode(), bankData);
             }
         }
-
         return bankDataMap;
+    }
+
+    private static void detectHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+        for (BankData data : bankDataMap.values()) {
+            String code = data.getSwiftCode()
+                .code();
+
+            if (code.toUpperCase()
+                .endsWith(HEADQUARTER_SUFFIX)) {
+                data.setHeadquarter(true);
+            }
+        }
+    }
+
+    private static void assignBranchesToHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+        Map<String, BankData> headquartersMap = getHeadquartersMap(bankDataMap);
+
+        for (BankData data : bankDataMap.values()) {
+            if (!data.isHeadquarter()) {
+                String code = data.getSwiftCode()
+                    .code();
+                String hqCode = getHqCode(code);
+                BankData hq = headquartersMap.get(hqCode);
+
+                if (hq != null) {
+                    hq.addRelatedBank(data);
+                }
+            }
+        }
+    }
+
+    private static String getHqCode(String code) {
+        return code.substring(0, code.length() - HEADQUARTER_SUFFIX.length());
+    }
+
+    private static Map<String, BankData> getHeadquartersMap(Map<SwiftCode, BankData> bankDataMap) {
+        Map<String, BankData> headquartersMap = new HashMap<>();
+        for (BankData bankData : bankDataMap.values()) {
+            if (bankData.isHeadquarter()) {
+                String code = bankData.getSwiftCode()
+                    .code();
+                String hqCode = getHqCode(code);
+                headquartersMap.put(hqCode, bankData);
+            }
+        }
+        return headquartersMap;
     }
 
     protected List<List<String>> readExcelContentIntoList(String filePath) {
@@ -48,7 +102,6 @@ public class SwiftCodesFileReader {
     }
 
     private static BankData readData(List<String> row, Map<HeaderColumnName, Integer> headers) {
-
         return BankData.builder()
             .swiftCode(new SwiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE)))
             .address(getStringCellValue(row, headers, HeaderColumnName.ADDRESS))
@@ -107,39 +160,6 @@ public class SwiftCodesFileReader {
                 log.error(String.format("Failed to read file %s", filePath), e);
                 throw new GeneralException(String.format("Failed to read file %s", filePath), e);
             }
-        }
-    }
-
-    @Getter
-    private enum HeaderColumnName {
-        COUNTRY_ISO2CODE("COUNTRY ISO2 CODE"), SWIFT_CODE("SWIFT CODE"), CODE_TYPE("CODE TYPE"), NAME("NAME"), ADDRESS("ADDRESS"), TOWN_NAME("TOWN NAME"), COUNTRY_NAME("COUNTRY NAME"), TIME_ZONE(
-            "TIME ZONE");
-
-        private final String header;
-        private static final Map<String, HeaderColumnName> names = new HashMap<>();
-
-        static {
-            for (HeaderColumnName header : HeaderColumnName.values()) {
-                names.put(header.header.toUpperCase(), header);
-            }
-        }
-
-        public static HeaderColumnName getByHeader(String header) {
-            HeaderColumnName readHeader = names.get(header.toUpperCase());
-            if (readHeader == null) {
-                throw new GeneralException(String.format("Unexpected header %s", header), null);
-            }
-
-            return readHeader;
-        }
-
-        HeaderColumnName(String header) {
-            this.header = header;
-        }
-
-        @Override
-        public String toString() {
-            return "HeaderColumnName{" + "header='" + header + '\'' + '}';
         }
     }
 }
