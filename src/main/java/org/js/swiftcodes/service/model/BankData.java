@@ -23,4 +23,8 @@ public class BankData {
     public void setHeadquarter() {
         isHeadquarter = true;
     }
+
+    public void addRelatedBank(BankData relatedBank) {
+        relatedBanks.add(relatedBank);
+    }
 }

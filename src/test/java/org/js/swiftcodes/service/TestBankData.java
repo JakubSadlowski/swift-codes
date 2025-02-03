@@ -64,4 +64,9 @@ public class TestBankData {
         .townName("WARSZAWA")
         .timeZone("Europe/Warsaw")
         .build();
+
+    static {
+        EXPECTED_BANK_DATA1.addRelatedBank(EXPECTED_BANK_DATA2);
+        EXPECTED_BANK_DATA4.addRelatedBank(EXPECTED_BANK_DATA5);
+    }
 }

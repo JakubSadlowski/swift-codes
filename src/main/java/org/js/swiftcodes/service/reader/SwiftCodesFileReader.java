@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @CommonsLog
 public class SwiftCodesFileReader {
@@ -26,25 +28,29 @@ public class SwiftCodesFileReader {
 
     public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
         Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
-        filterSwiftCodeBankDataAndSetHeadquarters(bankDataMap);
+        Map<SwiftCode, BankData> headquarters = filterSwiftCodeBankDataSetHeadquartersAndRemoveFromMap(bankDataMap);
+        findRelatedBanksToHeadquartersAndAddToList(headquarters, bankDataMap);
+        bankDataMap.putAll(headquarters);
 
         return bankDataMap;
     }
 
-    private static void filterSwiftCodeBankDataAndSetHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
-        for (BankData data : bankDataMap.values()) {
-            int swiftCodeLength = data.getSwiftCode()
-                .code()
-                .length();
+    private static void findRelatedBanksToHeadquartersAndAddToList(Map<SwiftCode, BankData> headquarters, Map<SwiftCode, BankData> bankDataMap) {
+        Map<String, BankData> headquartersMap = new HashMap<>();
+        for (BankData headquarter : headquarters.values()) {
+            String headquarterKey = headquarter.getSwiftCode()
+                .code();
+            if (headquarterKey.length() >= 7) {
+                headquartersMap.put(headquarterKey.substring(0, 7), headquarter);
+            }
+        }
 
-            // BIC8 and BIC11
-            if (swiftCodeLength == 8 || swiftCodeLength == 11) {
-                String code = data.getSwiftCode()
-                    .code();
-                if (code.substring(swiftCodeLength - 3)
-                    .equalsIgnoreCase("XXX")) {
-                    data.setHeadquarter();
-                }
+        for (BankData data : bankDataMap.values()) {
+            String currentKey = data.getSwiftCode()
+                .code();
+            if (currentKey.length() >= 7 && headquartersMap.containsKey(currentKey.substring(0, 7))) {
+                headquartersMap.get(currentKey.substring(0, 7))
+                    .addRelatedBank(data);
             }
         }
     }
@@ -66,12 +72,39 @@ public class SwiftCodesFileReader {
         return bankDataMap;
     }
 
+    private static Map<SwiftCode, BankData> filterSwiftCodeBankDataSetHeadquartersAndRemoveFromMap(Map<SwiftCode, BankData> bankDataMap) {
+        Map<SwiftCode, BankData> headquarters = new HashMap<>();
+
+        Set<SwiftCode> swiftCodesToRemove = new HashSet<>();
+
+        for (BankData data : bankDataMap.values()) {
+            int swiftCodeLength = data.getSwiftCode()
+                .code()
+                .length();
+
+            // BIC11
+            if (swiftCodeLength == 11) {
+                String code = data.getSwiftCode()
+                    .code();
+                if (code.substring(swiftCodeLength - 3)
+                    .equalsIgnoreCase("XXX")) {
+                    data.setHeadquarter();
+                    headquarters.put(data.getSwiftCode(), data);
+                    swiftCodesToRemove.add(data.getSwiftCode());
+                }
+            }
+        }
+
+        swiftCodesToRemove.forEach(bankDataMap::remove);
+
+        return headquarters;
+    }
+
     protected List<List<String>> readExcelContentIntoList(String filePath) {
         return ExcelToListReader.readExcelContentIntoList(filePath);
     }
 
     private static BankData readData(List<String> row, Map<HeaderColumnName, Integer> headers) {
-
         return BankData.builder()
             .swiftCode(new SwiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE)))
             .address(getStringCellValue(row, headers, HeaderColumnName.ADDRESS))
