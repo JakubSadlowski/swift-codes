@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: SWIFT Codes OpenAPI
+  description: |-
+    This is the API for operating on bank swift codes.
+  contact:
+    email: sadlowski.jakub.work@gmail.com
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://localhost:8080/
+tags:
+  - name: swift-codes
+    description: Everything about bank SWIFT codes
+
+paths:
+  /v1/swift-codes/{swift-code}:
+    get:
+      tags:
+        - swift-codes
+      summary: Find single SWIFT code
+      description: Returns a single bank SWIFT code
+      operationId: getPetById
+      parameters:
+        - name: swift-code
+          in: path
+          description: SWIFT code of bank headquarter or branch to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SwiftCode'
+        '400':
+          description: Invalid SWIFT code supplied
+        '404':
+          description: SWIFT code not found
+
+components:
+  schemas:
+    SwiftCode:
+      required:
+        - name
+      type: object
+      properties:
+        address:
+          type: string
+          example: HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593
+        bankName:
+          type: string
+          example: BANK MILLENNIUM S.A.
+        countryISO2:
+          type: string
+          example: PL
+        countryName:
+          type: string
+          example: POLAND
+        isHeadquarter:
+          type: boolean
+          example: true
+        swiftCode:
+          type: string
+          example: BIGBPLPWXXX
+      xml:
+        name: swiftCode
+  requestBodies:
+    SwiftCode:
+      description: SWIFT Code of given bank
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SwiftCode'
