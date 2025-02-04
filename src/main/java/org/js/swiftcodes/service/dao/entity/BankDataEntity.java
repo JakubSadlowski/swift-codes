@@ -3,7 +3,7 @@ package org.js.swiftcodes.service.dao.entity;
 import lombok.Data;
 
 @Data
-public class SwiftCodesEntity {
+public class BankDataEntity {
     private final int id;
     private final String swiftCode;
     private final String countryIso2Code;

@@ -1,7 +1,7 @@
 package org.js.swiftcodes.service.dao.mapper;
 
 import org.js.swiftcodes.config.DatabaseConfig;
-import org.js.swiftcodes.service.dao.entity.SwiftCodesEntity;
+import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ class SwiftCodesMapperIT {
     @Test
     void whenSelectAllSwiftCodes_thenReturnAll() {
         // when
-        List<SwiftCodesEntity> swiftCodesEntities = swiftCodesMapper.fetchAllSwiftCodes();
+        List<BankDataEntity> swiftCodesEntities = swiftCodesMapper.fetchAllSwiftCodes();
 
         // then
         Assertions.assertNotNull(swiftCodesEntities);

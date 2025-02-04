@@ -1,6 +1,6 @@
 package org.js.swiftcodes.service;
 
-import org.js.swiftcodes.service.model.BankData;
+import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.model.SwiftCode;
 
 public class TestBankData {

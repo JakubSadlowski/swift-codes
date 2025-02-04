@@ -1,7 +1,7 @@
 package org.js.swiftcodes.service.reader;
 
 import org.js.swiftcodes.service.exceptions.GeneralException;
-import org.js.swiftcodes.service.model.BankData;
+import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.model.SwiftCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

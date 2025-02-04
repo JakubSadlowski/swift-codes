@@ -7,7 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.js.swiftcodes.service.exceptions.GeneralException;
-import org.js.swiftcodes.service.model.BankData;
+import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.model.SwiftCode;
 
 import java.io.FileInputStream;
