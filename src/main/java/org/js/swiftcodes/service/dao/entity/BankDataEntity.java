@@ -16,5 +16,9 @@ public class BankDataEntity {
     private final String townName;
     private final String countryName;
     private final String timeZone;
-    private final Integer parentId;
+    private Integer parentId;
+
+    public String getHeadquarterSwiftCode() {
+        return swiftCode.substring(0, 7);
+    }
 }

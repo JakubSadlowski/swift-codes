@@ -3,15 +3,18 @@ package org.js.swiftcodes.api.mappers;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.model.SwiftCode;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Component
 public class BankDataMapper {
     private BankDataMapper() {
+
+    }
+
+    public static BankDataEntity mapToBankDataEntity(BankData bankData) {
+        return mapToBankDataEntity(bankData, null, null);
     }
 
     public static BankDataEntity mapToBankDataEntity(BankData bankData, Integer id, Integer parentId) {

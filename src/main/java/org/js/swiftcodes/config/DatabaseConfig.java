@@ -3,6 +3,8 @@ package org.js.swiftcodes.config;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.flywaydb.core.Flyway;
+import org.js.swiftcodes.service.dao.BanksDataStore;
+import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -80,5 +82,10 @@ public class DatabaseConfig {
     @Bean
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    @Bean
+    public BanksDataStore createBanksDataStore(BankDataMapper bankDataMapper) {
+        return new BanksDataStore(bankDataMapper);
     }
 }

@@ -1,16 +1,13 @@
 package org.js.swiftcodes.api.validation;
 
 import lombok.extern.apachecommons.CommonsLog;
-import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.js.swiftcodes.api.model.Error;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
@@ -18,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@ControllerAdvice
-@Order(Ordered.HIGHEST_PRECEDENCE)
+//@ControllerAdvice
+//@Order(Ordered.HIGHEST_PRECEDENCE)
 @CommonsLog
 public class GlobalExceptionHandler {
     @ExceptionHandler(GeneralException.class)
