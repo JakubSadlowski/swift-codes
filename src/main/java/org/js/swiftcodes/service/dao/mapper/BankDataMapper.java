@@ -11,12 +11,8 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.type.JdbcType;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
-import org.js.swiftcodes.service.exceptions.GeneralException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Mapper
 public interface BankDataMapper {
@@ -50,70 +46,5 @@ public interface BankDataMapper {
 
     @Delete("DELETE FROM banks_data WHERE swift_code=#{swiftCode}")
     int deleteOne(String swiftCode);
-
-    //    @Insert("""
-    //        WITH input_banks_data AS (
-    //            <foreach collection='swiftCodes' item='item' separator='UNION ALL'>
-    //                 SELECT #{item.id} as id
-    //                      , #{item.swiftCode} as swift_code
-    //                      , #{item.countryIso2Code} as country_iso2_code
-    //                      , #{item.isHeadquarter} as is_headquarter
-    //                      , #{item.name} as name
-    //                      , #{item.codeType} as code_type
-    //                      , #{item.address} as address
-    //                      , #{item.townName} as town_name
-    //                      , #{item.countryName} as country_name
-    //                      , #{item.timeZone} as time_zone
-    //                      , #{item.parentId} as parent_id
-    //            </foreach>
-    //        )
-    //        INSERT INTO swift_codes (id, swift_code, country_iso2_code, is_headquarter, name, code_type, address, town_name, country_name, time_zone, parent_id)
-    //        SELECT x.id, x.swift_code, x.country_iso2_code, x.is_headquarter, x.name
-    //              ,x.code_type, x.address, x.town_name, x.country_name, x.time_zone, x.parent_id
-    //          FROM input_swift_codes x
-    //          LEFT JOIN swift_codes y ON x.swift_code = y.swift_code
-    //         WHERE y.swift_code IS NULL;
-    //        """)
-    default void insertList(@Param("swiftCodes") List<BankDataEntity> swiftCodes) {
-        Map<String, BankDataEntity> headquarters = firstInsertHeadquarters(swiftCodes);
-        List<BankDataEntity> branches = getBranches(swiftCodes);
-
-        for (BankDataEntity branch : branches) {
-            String hqSwiftCode = getHqSwiftCode(branch);
-            mapParentIdIfBranchMAtchesWithHq(branch, headquarters, hqSwiftCode);
-            insert(branch);
-        }
-    }
-
-    private static void mapParentIdIfBranchMAtchesWithHq(BankDataEntity branch, Map<String, BankDataEntity> headquarters, String hqSwiftCode) {
-        BankDataEntity headquarter = headquarters.get(hqSwiftCode);
-        if (headquarter != null) {
-            branch.setParentId(headquarter.getId());
-        }
-    }
-
-    private static String getHqSwiftCode(BankDataEntity branch) {
-        return branch.getSwiftCode()
-            .substring(0, 7);
-    }
-
-    private static List<BankDataEntity> getBranches(List<BankDataEntity> swiftCodes) {
-        return swiftCodes.stream()
-            .filter(b -> !b.isHeadquarter())
-            .toList();
-    }
-
-    private Map<String, BankDataEntity> firstInsertHeadquarters(List<BankDataEntity> swiftCodes) {
-        Map<String, BankDataEntity> headquarters = swiftCodes.stream()
-            .filter(BankDataEntity::isHeadquarter)
-            .collect(Collectors.toMap(BankDataEntity::getSwiftCode, Function.identity(), (key1, key2) -> {
-                throw new GeneralException(String.format("duplicate key value found %s", key1));
-            }));
-        for (BankDataEntity bankDataEntity : headquarters.values()) {
-            insert(bankDataEntity);
-        }
-
-        return headquarters;
-    }
 
 }
