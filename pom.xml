@@ -8,8 +8,9 @@
         <version>3.4.2</version>
         <relativePath/>
     </parent>
+
     <groupId>org.js</groupId>
-    <artifactId>swift-codes</artifactId>
+    <artifactId>swift-codes-rest-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>swift-codes</name>
     <description>swift-codes</description>
