@@ -2,11 +2,14 @@ package org.js.swiftcodes.api.mappers;
 
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
+import org.js.swiftcodes.service.model.SwiftCode;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class BankDataMapper {
     private BankDataMapper() {
     }
@@ -48,5 +51,19 @@ public class BankDataMapper {
             });
 
         return bankDataEntitiesWithIds;
+    }
+
+    public static BankData mapToBankData(BankDataEntity bankDataEntity) {
+        return BankData.builder()
+            .name(bankDataEntity.getName())
+            .countryISO2Code(bankDataEntity.getCountryIso2Code())
+            .swiftCode(new SwiftCode(bankDataEntity.getSwiftCode()))
+            .isHeadquarter(bankDataEntity.isHeadquarter())
+            .townName(bankDataEntity.getTownName())
+            .timeZone(bankDataEntity.getTimeZone())
+            .address(bankDataEntity.getAddress())
+            .countryName(bankDataEntity.getCountryName())
+            .codeType(bankDataEntity.getCodeType())
+            .build();
     }
 }

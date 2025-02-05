@@ -60,6 +60,20 @@ public interface SwiftCodesMapper {
     })
     void insert(@Param("swiftCodes") List<BankDataEntity> swiftCodes);
 
+    @Select("SELECT * FROM swift_codes WHERE swift_code = 'swiftCode'")
+    @Results({ @Result(property = "id", column = "id", javaType = Integer.class, jdbcType = JdbcType.INTEGER),//
+        @Result(property = "swiftCode", column = "swift_code", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "countryIso2Code", column = "country_iso2_code", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "isHeadquarter", column = "is_headquarter", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN),//
+        @Result(property = "name", column = "name", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "codeType", column = "code_type", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "address", column = "address", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "townName", column = "town_name", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "countryName", column = "country_name", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "timeZone", column = "time_zone", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
+        @Result(property = "parentId", column = "parent_id", javaType = Integer.class, jdbcType = JdbcType.INTEGER) })
+    BankDataEntity getSwiftCode(@Param("swiftCode") String swiftCode);
+
 
     default void storeAll(List<BankDataEntity> swiftCodes, int chunkSize){
         List<List<BankDataEntity>> lists = IntStream.range(0, (swiftCodes.size() + chunkSize - 1) / chunkSize)
