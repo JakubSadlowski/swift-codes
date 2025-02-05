@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.type.JdbcType;
-import org.js.swiftcodes.service.dao.entity.SwiftCodesEntity;
+import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 
 import java.util.List;
 
@@ -23,5 +23,5 @@ public interface SwiftCodesMapper {
         @Result(property = "countryName", column = "country_name", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
         @Result(property = "timeZone", column = "time_zone", javaType = String.class, jdbcType = JdbcType.VARCHAR),//
         @Result(property = "timeZone", column = "parent_id", javaType = Integer.class, jdbcType = JdbcType.INTEGER) })
-    List<SwiftCodesEntity> fetchAllSwiftCodes();
+    List<BankDataEntity> fetchAllSwiftCodes();
 }

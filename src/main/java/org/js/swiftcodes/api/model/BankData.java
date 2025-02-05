@@ -1,11 +1,13 @@
-package org.js.swiftcodes.service.model;
+package org.js.swiftcodes.api.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.js.swiftcodes.service.model.SwiftCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Delete fields codeType, townName, timeZone
 @Data
 @Builder
 public class BankData {
