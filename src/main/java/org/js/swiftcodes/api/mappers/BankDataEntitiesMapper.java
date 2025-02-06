@@ -2,7 +2,7 @@ package org.js.swiftcodes.api.mappers;
 
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
-import org.js.swiftcodes.service.model.SwiftCode;
+import org.js.swiftcodes.service.model.String;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class BankDataEntitiesMapper {
         return BankData.builder()
             .name(bankDataEntity.getName())
             .countryISO2Code(bankDataEntity.getCountryIso2Code())
-            .swiftCode(new SwiftCode(bankDataEntity.getSwiftCode()))
+            .swiftCode(new String(bankDataEntity.getSwiftCode()))
             .isHeadquarter(bankDataEntity.isHeadquarter())
             .townName(bankDataEntity.getTownName())
             .timeZone(bankDataEntity.getTimeZone())
