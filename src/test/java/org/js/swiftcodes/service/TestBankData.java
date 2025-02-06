@@ -1,6 +1,7 @@
 package org.js.swiftcodes.service;
 
 import org.js.swiftcodes.api.model.BankData;
+import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 
 public class TestBankData {
     private TestBankData() {
@@ -62,6 +63,17 @@ public class TestBankData {
         .countryName("POLAND")
         .townName("WARSZAWA")
         .timeZone("Europe/Warsaw")
+        .build();
+
+    public static final BankDataEntity EXPECTED_BANK_DATA_ENTITY2 = BankDataEntity.builder()
+        .swiftCode("BCHICLRMEXP")
+        .codeType("BIC11")
+        .name("BANCO DE CHILE")
+        .address("")
+        .countryIso2Code("CL")
+        .countryName("CHILE")
+        .townName("SANTIAGO")
+        .timeZone("Pacific/Easter")
         .build();
 
     static {
