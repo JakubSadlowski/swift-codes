@@ -53,8 +53,7 @@ class BanksDataStoreIT {
     }
 
     private static void assertEqualsBankData(BankData expectedBankData, BankDataEntity resultBankData) {
-        Assertions.assertEquals(expectedBankData.getSwiftCode()
-            .code(), resultBankData.getSwiftCode());
+        Assertions.assertEquals(expectedBankData.getSwiftCode(), resultBankData.getSwiftCode());
         Assertions.assertEquals(expectedBankData.getName(), resultBankData.getName());
         Assertions.assertEquals(expectedBankData.getAddress(), resultBankData.getAddress());
         Assertions.assertEquals(expectedBankData.getCodeType(), resultBankData.getCodeType());
@@ -67,12 +66,10 @@ class BanksDataStoreIT {
     @AfterEach
     void cleanupAfterTest() {
         for (BankData bankData : getBanks(false)) {
-            bankDataMapper.deleteOne(bankData.getSwiftCode()
-                .code());
+            bankDataMapper.deleteOne(bankData.getSwiftCode());
         }
         for (BankData bankData : getBanks(true)) {
-            bankDataMapper.deleteOne(bankData.getSwiftCode()
-                .code());
+            bankDataMapper.deleteOne(bankData.getSwiftCode());
         }
     }
 

@@ -1,7 +1,6 @@
 package org.js.swiftcodes.service.reader;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.service.model.String;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +24,7 @@ class SwiftCodesFileReaderTest {
     @Spy
     private SwiftCodesFileReader reader;
 
-    private static final java.lang.String DUMMY_EXCEL_FILE = "dummy.xlsx";
+    private static final String DUMMY_EXCEL_FILE = "dummy.xlsx";
 
     @Test
     void readSwiftCodesFile_Data_Read_Correctly() {

@@ -1,14 +1,13 @@
 package org.js.swiftcodes.service;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.service.model.String;
 
 public class TestBankData {
     private TestBankData() {
     }
 
     public static final BankData EXPECTED_BANK_DATA1 = BankData.builder()
-        .swiftCode(new String("BCHICLRMXXX"))
+        .swiftCode("BCHICLRMXXX")
         .codeType("BIC11")
         .name("BANCO DE CHILE")
         .address("")
@@ -20,7 +19,7 @@ public class TestBankData {
         .build();
 
     public static final BankData EXPECTED_BANK_DATA2 = BankData.builder()
-        .swiftCode(new String("BCHICLRMEXP"))
+        .swiftCode("BCHICLRMEXP")
         .codeType("BIC11")
         .name("BANCO DE CHILE")
         .address("")
@@ -31,7 +30,7 @@ public class TestBankData {
         .build();
 
     public static final BankData EXPECTED_BANK_DATA3 = BankData.builder()
-        .swiftCode(new String("AIPOPLP1XXX"))
+        .swiftCode("AIPOPLP1XXX")
         .codeType("BIC11")
         .name("SANTANDER CONSUMER BANK SPOLKA AKCYJNA")
         .countryISO2Code("PL")
@@ -43,7 +42,7 @@ public class TestBankData {
         .build();
 
     public static final BankData EXPECTED_BANK_DATA4 = BankData.builder()
-        .swiftCode(new String("BIGBPLPWXXX"))
+        .swiftCode("BIGBPLPWXXX")
         .codeType("BIC11")
         .name("BANK MILLENNIUM S.A.")
         .countryISO2Code("PL")
@@ -55,7 +54,7 @@ public class TestBankData {
         .build();
 
     public static final BankData EXPECTED_BANK_DATA5 = BankData.builder()
-        .swiftCode(new String("BIGBPLPWCUS"))
+        .swiftCode("BIGBPLPWCUS")
         .codeType("BIC11")
         .name("BANK MILLENNIUM S.A.")
         .countryISO2Code("PL")

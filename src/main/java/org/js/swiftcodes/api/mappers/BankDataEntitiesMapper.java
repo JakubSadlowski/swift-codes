@@ -2,11 +2,6 @@ package org.js.swiftcodes.api.mappers;
 
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
-import org.js.swiftcodes.service.model.String;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BankDataEntitiesMapper {
     private BankDataEntitiesMapper() {
@@ -25,8 +20,7 @@ public class BankDataEntitiesMapper {
             .codeType(bankData.getCodeType())
             .countryIso2Code(bankData.getCountryISO2Code())
             .countryName(bankData.getCountryName())
-            .swiftCode(bankData.getSwiftCode()
-                .code())
+            .swiftCode(bankData.getSwiftCode())
             .isHeadquarter(bankData.isHeadquarter())
             .timeZone(bankData.getTimeZone())
             .townName(bankData.getTownName())
@@ -34,33 +28,11 @@ public class BankDataEntitiesMapper {
             .build();
     }
 
-    public static List<BankDataEntity> mapToBankDataEntitiesListWithIds(List<BankData> bankDataList) {
-        AtomicInteger id = new AtomicInteger(1);
-        List<BankDataEntity> bankDataEntitiesWithIds = new ArrayList<>();
-
-        bankDataList.stream()
-            .filter(BankData::isHeadquarter)
-            .forEach(headquarterBank -> {
-                Integer headquarterEntityId = id.getAndIncrement();
-                BankDataEntity headquarterEntity = BankDataEntitiesMapper.mapToBankDataEntity(headquarterBank, headquarterEntityId, null);
-                bankDataEntitiesWithIds.add(headquarterEntity);
-
-                headquarterBank.getRelatedBanks()
-                    .forEach(relatedBank -> {
-                        Integer relatedBankEntityId = id.getAndIncrement();
-                        BankDataEntity relatedEntity = BankDataEntitiesMapper.mapToBankDataEntity(relatedBank, relatedBankEntityId, headquarterEntityId);
-                        bankDataEntitiesWithIds.add(relatedEntity);
-                    });
-            });
-
-        return bankDataEntitiesWithIds;
-    }
-
     public static BankData mapToBankData(BankDataEntity bankDataEntity) {
         return BankData.builder()
             .name(bankDataEntity.getName())
             .countryISO2Code(bankDataEntity.getCountryIso2Code())
-            .swiftCode(new String(bankDataEntity.getSwiftCode()))
+            .swiftCode(bankDataEntity.getSwiftCode())
             .isHeadquarter(bankDataEntity.isHeadquarter())
             .townName(bankDataEntity.getTownName())
             .timeZone(bankDataEntity.getTimeZone())
