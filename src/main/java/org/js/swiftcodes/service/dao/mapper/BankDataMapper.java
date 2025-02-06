@@ -35,6 +35,8 @@ public interface BankDataMapper {
     @ResultMap("bankDataResult")
     List<BankDataEntity> selectAll();
 
+
+
     @Insert({ """
         INSERT INTO banks_data (swift_code, country_iso2_code, is_headquarter, name, code_type, address, town_name, country_name, time_zone, parent_id)
         VALUES(#{bankData.swiftCode}, #{bankData.countryIso2Code}, #{bankData.isHeadquarter}, #{bankData.name}, #{bankData.codeType}, #{bankData.address}, #{bankData.townName}

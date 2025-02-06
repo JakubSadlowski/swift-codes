@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SwiftCode'
+                $ref: '#/components/schemas/BankData'
         '400':
           description: Invalid SWIFT code supplied
         '404':
@@ -44,7 +44,7 @@ paths:
 
 components:
   schemas:
-    SwiftCode:
+    BankData:
       required:
         - name
       type: object
@@ -75,4 +75,4 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/SwiftCode'
+            $ref: '#/components/schemas/BankData'
