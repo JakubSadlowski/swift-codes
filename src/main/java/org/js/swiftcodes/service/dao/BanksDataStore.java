@@ -1,7 +1,7 @@
 package org.js.swiftcodes.service.dao;
 
 import org.apache.ibatis.annotations.Param;
-import org.js.swiftcodes.api.mappers.BankDataEntitiesMapper;
+import org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
@@ -22,10 +22,6 @@ public class BanksDataStore {
         this.bankDataMapper = bankDataMapper;
     }
 
-    /**
-     * @param bankDataList
-     * @return
-     */
     public List<BankDataEntity> insertList(@Param("swiftCodes") List<BankData> bankDataList) {
         // note those entities do not have id and parentID assigned, this will be done after db insert of headquarters
         List<BankDataEntity> bankDataEntities = mapToBankDataEntities(bankDataList);
@@ -45,7 +41,7 @@ public class BanksDataStore {
     private List<BankDataEntity> mapToBankDataEntities(List<BankData> bankDataList) {
         List<BankDataEntity> resultList = new ArrayList<>(bankDataList.size());
         for (BankData bankData : bankDataList) {
-            resultList.add(BankDataEntitiesMapper.mapToBankDataEntity(bankData));
+            resultList.add(BankDataAndResponsesMapper.mapToBankDataEntity(bankData));
         }
         return resultList;
     }

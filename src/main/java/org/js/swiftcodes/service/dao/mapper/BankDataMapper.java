@@ -31,6 +31,10 @@ public interface BankDataMapper {
         @Result(property = "parentId", column = "parent_id", javaType = Integer.class, jdbcType = JdbcType.INTEGER) })
     BankDataEntity selectOne(@Param("swiftCode") String swiftCode);
 
+    @Select("SELECT * FROM banks_data WHERE parent_id = #{parentId}")
+    @ResultMap("bankDataResult")
+    List<BankDataEntity> selectAllBranches(Integer parentId);
+
     @Select("SELECT * FROM banks_data")
     @ResultMap("bankDataResult")
     List<BankDataEntity> selectAll();

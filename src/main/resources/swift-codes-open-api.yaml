@@ -37,15 +37,15 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/HeadquarterData'
-                  - $ref: '#/components/schemas/BranchData'
+                  - $ref: '#/components/schemas/HeadquarterResponse'
+                  - $ref: '#/components/schemas/BranchResponse'
         '400':
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
 components:
   schemas:
-    HeadquarterData:
+    HeadquarterResponse:
       type: object
       properties:
         address:
@@ -69,11 +69,11 @@ components:
         branches:
           type: array
           items:
-            $ref: '#/components/schemas/BranchData'
+            $ref: '#/components/schemas/BranchResponse'
       xml:
-        name: headquarterData
+        name: headquarterResponse
 
-    BranchData:
+    BranchResponse:
       type: object
       properties:
         address:
@@ -95,4 +95,4 @@ components:
           type: string
           example: BIGBPLPWB1C
       xml:
-        name: branchData
+        name: branchResponse

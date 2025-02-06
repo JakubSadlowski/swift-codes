@@ -1,7 +1,7 @@
 package org.js.swiftcodes.api;
 
-import org.js.swiftcodes.api.mappers.BankDataEntitiesMapper;
-import org.js.swiftcodes.api.model.BankData;
+import org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper;
+import org.js.swiftcodes.api.model.BranchResponse;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToBranchResponse;
+import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToHeadquarterResponse;
 
 @RestController
 @RequestMapping("/v1/")
@@ -24,13 +28,27 @@ public class SwiftCodeController {
     }
 
     @GetMapping("swift-codes/{swift-code}")
-    public ResponseEntity<BankData> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
-        BankDataEntity foundSwiftCode = bankDataMapper.selectOne(swiftCode);
-        return ResponseEntity.ok(BankDataEntitiesMapper.mapToBankData(foundSwiftCode));
+    public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
+        BankDataEntity foundBank = bankDataMapper.selectOne(swiftCode);
+
+        if (swiftCode.toUpperCase()
+            .endsWith("XXX")) {
+            List<BranchResponse> branchResponses = getBranchResponses(foundBank.getId());
+            return ResponseEntity.ok(mapToHeadquarterResponse(foundBank, branchResponses));
+        }
+
+        return ResponseEntity.ok(mapToBranchResponse(foundBank));
     }
 
     @GetMapping("swift-codes/country/{countryISO2Code}")
-    public ResponseEntity<List<BankData>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
+    public ResponseEntity<List<BranchResponse>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
         return null;
+    }
+
+    private List<BranchResponse> getBranchResponses(Integer headquarterId) {
+        return bankDataMapper.selectAllBranches(headquarterId)
+            .stream()
+            .map(BankDataAndResponsesMapper::mapToBranchResponse)
+            .collect(Collectors.toList());
     }
 }
