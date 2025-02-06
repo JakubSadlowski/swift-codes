@@ -58,9 +58,16 @@ class BankDataInsertUpdateDeleteIT {
         BankDataEntity fetchedBankData = bankDataMapper.selectOne(TEST_SWIFT_CODE1);
 
         // then
-        // TODO: Add full check of all fields
         Assertions.assertNotNull(fetchedBankData);
         Assertions.assertEquals("BIC11", fetchedBankData.getCodeType());
+        Assertions.assertEquals("TEST1", fetchedBankData.getName());
+        Assertions.assertEquals("", fetchedBankData.getAddress());
+        Assertions.assertEquals("CL", fetchedBankData.getCountryIso2Code());
+        Assertions.assertEquals("CHILE", fetchedBankData.getCountryName());
+        Assertions.assertEquals("SANTIAGO", fetchedBankData.getTownName());
+        Assertions.assertEquals("Pacific/Easter", fetchedBankData.getTimeZone());
+        Assertions.assertEquals("TEST1XXX", fetchedBankData.getSwiftCode());
+        Assertions.assertTrue(fetchedBankData.isHeadquarter());
     }
 
     @Test

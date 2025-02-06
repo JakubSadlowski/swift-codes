@@ -45,6 +45,9 @@ class BanksDataStoreIT {
         Assertions.assertFalse(resultBankData2.isHeadquarter());
         Assertions.assertEquals(resultBankData2.getParentId(), resultBankData1.getId());
         BankDataEntity resultBankData3 = bankDataEntities.get(2);
+        Assertions.assertTrue(resultBankData3.isHeadquarter());
+        Assertions.assertEquals(TestBankData.EXPECTED_BANK_DATA1.getSwiftCode().code(), resultBankData1.getSwiftCode());
+
         // TODO: test me further
     }
 

@@ -1,6 +1,7 @@
 package org.js.swiftcodes.service.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.js.swiftcodes.api.mappers.BankDataEntitiesMapper;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
@@ -34,7 +35,7 @@ public class BanksDataStore {
 
         for (BankDataEntity branch : branches) {
             String hqSwiftCode = branch.getHeadquarterSwiftCode();
-            mapParentIdIfBranchMAtchesWithHq(branch, headquarters, hqSwiftCode);
+            mapParentIdIfBranchMatchesWithHq(branch, headquarters, hqSwiftCode);
             bankDataMapper.insert(branch);
         }
 
@@ -44,12 +45,12 @@ public class BanksDataStore {
     private List<BankDataEntity> mapToBankDataEntities(List<BankData> bankDataList) {
         List<BankDataEntity> resultList = new ArrayList<>(bankDataList.size());
         for (BankData bankData : bankDataList) {
-            resultList.add(org.js.swiftcodes.api.mappers.BankDataMapper.mapToBankDataEntity(bankData));
+            resultList.add(BankDataEntitiesMapper.mapToBankDataEntity(bankData));
         }
         return resultList;
     }
 
-    private static void mapParentIdIfBranchMAtchesWithHq(BankDataEntity branch, Map<String, BankDataEntity> headquarters, String hqSwiftCode) {
+    private static void mapParentIdIfBranchMatchesWithHq(BankDataEntity branch, Map<String, BankDataEntity> headquarters, String hqSwiftCode) {
         BankDataEntity headquarter = headquarters.get(hqSwiftCode);
         if (headquarter != null) {
             branch.setParentId(headquarter.getId());

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BankDataMapper {
-    private BankDataMapper() {
+public class BankDataEntitiesMapper {
+    private BankDataEntitiesMapper() {
 
     }
 
@@ -42,13 +42,13 @@ public class BankDataMapper {
             .filter(BankData::isHeadquarter)
             .forEach(headquarterBank -> {
                 Integer headquarterEntityId = id.getAndIncrement();
-                BankDataEntity headquarterEntity = BankDataMapper.mapToBankDataEntity(headquarterBank, headquarterEntityId, null);
+                BankDataEntity headquarterEntity = BankDataEntitiesMapper.mapToBankDataEntity(headquarterBank, headquarterEntityId, null);
                 bankDataEntitiesWithIds.add(headquarterEntity);
 
                 headquarterBank.getRelatedBanks()
                     .forEach(relatedBank -> {
                         Integer relatedBankEntityId = id.getAndIncrement();
-                        BankDataEntity relatedEntity = BankDataMapper.mapToBankDataEntity(relatedBank, relatedBankEntityId, headquarterEntityId);
+                        BankDataEntity relatedEntity = BankDataEntitiesMapper.mapToBankDataEntity(relatedBank, relatedBankEntityId, headquarterEntityId);
                         bankDataEntitiesWithIds.add(relatedEntity);
                     });
             });
