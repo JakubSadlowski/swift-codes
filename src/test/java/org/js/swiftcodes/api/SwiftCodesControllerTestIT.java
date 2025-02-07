@@ -1,9 +1,7 @@
 package org.js.swiftcodes.api;
 
-import org.js.swiftcodes.api.model.BranchResponse;
-import org.js.swiftcodes.api.model.HeadquarterResponse;
+import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.TestBankData;
-import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,10 +38,10 @@ class SwiftCodesControllerTestIT {
         Mockito.when(bankDataMapper.selectOne(branchSwiftCode))
             .thenReturn(TestBankData.EXPECTED_BANK_DATA_ENTITY2);
 
-        BankDataEntity expectedBranch = TestBankData.EXPECTED_BANK_DATA_ENTITY2;
+        BankData expectedBranch = TestBankData.EXPECTED_BANK_DATA2;
 
         // when
-        ResponseEntity<BranchResponse> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMEXP", BranchResponse.class);
+        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMEXP", BankData.class);
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -64,44 +62,34 @@ class SwiftCodesControllerTestIT {
         Mockito.when(bankDataMapper.selectAllBranches(TestBankData.EXPECTED_BANK_DATA_ENTITY1.getId()))
             .thenReturn(List.of(TestBankData.EXPECTED_BANK_DATA_ENTITY2));
 
-        BankDataEntity expectedHeadquarter = TestBankData.EXPECTED_BANK_DATA_ENTITY1;
-        BankDataEntity expectedBranch = TestBankData.EXPECTED_BANK_DATA_ENTITY2;
+        BankData expectedHeadquarter = TestBankData.EXPECTED_BANK_DATA1;
+        BankData expectedBranch = TestBankData.EXPECTED_BANK_DATA2;
 
         // when
-        ResponseEntity<HeadquarterResponse> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMXXX", HeadquarterResponse.class);
+        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMXXX", BankData.class);
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        HeadquarterResponse headquarterResponse = response.getBody();
+        BankData headquarterResponse = response.getBody();
         assertHeadquarterResponse(expectedHeadquarter, headquarterResponse);
 
-        List<BranchResponse> branchResponses = headquarterResponse.getBranches();
+        List<BankData> branchResponses = headquarterResponse.getRelatedBanks();
         assertBranchResponsesList(expectedBranch, branchResponses);
 
         // Verify the mapper was called
         verify(bankDataMapper, times(1)).selectOne(branchSwiftCode);
     }
 
-    private static void assertBranchResponsesList(BankDataEntity expectedBranch, List<BranchResponse> branchResponses) {
+    private static void assertBranchResponsesList(BankData expectedBranch, List<BankData> branchResponses) {
         Assertions.assertNotNull(branchResponses);
-        Assertions.assertEquals(expectedBranch.getSwiftCode(),
-            branchResponses.get(0)
-                .getSwiftCode());
-        Assertions.assertEquals(expectedBranch.getAddress(),
-            branchResponses.get(0)
-                .getAddress());
-        Assertions.assertEquals(expectedBranch.getCountryName(),
-            branchResponses.get(0)
-                .getCountryName());
-        Assertions.assertEquals(expectedBranch.getName(),
-            branchResponses.get(0)
-                .getBankName());
-        Assertions.assertEquals(expectedBranch.getCountryIso2Code(),
-            branchResponses.get(0)
-                .getCountryISO2());
-        Assertions.assertFalse(branchResponses.get(0)
-            .isHeadquarter());
+        BankData branch = branchResponses.get(0);
+        Assertions.assertEquals(expectedBranch.getSwiftCode(), branch.getSwiftCode());
+        Assertions.assertEquals(expectedBranch.getAddress(), branch.getAddress());
+        Assertions.assertEquals(expectedBranch.getCountryName(), branch.getCountryName());
+        Assertions.assertEquals(expectedBranch.getName(), branch.getName());
+        Assertions.assertEquals(expectedBranch.getCountryISO2Code(), branch.getCountryISO2Code());
+        Assertions.assertFalse(branch.isHeadquarter());
     }
 
 }
