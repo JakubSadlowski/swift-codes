@@ -1,7 +1,6 @@
 package org.js.swiftcodes.api;
 
 import lombok.extern.apachecommons.CommonsLog;
-import org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper;
 import org.js.swiftcodes.api.model.BranchResponse;
 import org.js.swiftcodes.api.model.Error;
 import org.js.swiftcodes.api.validation.BadRequestException;
@@ -21,9 +20,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToBranchResponse;
 import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToHeadquarterResponse;
@@ -31,36 +27,56 @@ import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToHead
 @RestController
 @RequestMapping("/v1/")
 @CommonsLog
-public class SwiftCodeController {
+public class SwiftCodesController {
     private final BankDataMapper bankDataMapper;
 
     @Autowired
-    public SwiftCodeController(BankDataMapper bankDataMapper) {
+    public SwiftCodesController(BankDataMapper bankDataMapper) {
         this.bankDataMapper = bankDataMapper;
     }
 
     @GetMapping("swift-codes/{swift-code}")
     public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
-        if (swiftCode.length() != 11)
-            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have 8 characters.", swiftCode));
+        validateSwiftCode(swiftCode);
 
-        BankDataEntity foundBank = bankDataMapper.selectOne(swiftCode);
+        BankDataEntity foundBank = findBankBySwiftCode(swiftCode);
 
-        if (foundBank == null)
-            throw new SwiftCodeNotFoundException(String.format("Swift code %s not found.", swiftCode));
-
-        if (swiftCode.toUpperCase()
-            .endsWith("XXX")) {
-            List<BranchResponse> branchResponses = getBranchResponses(foundBank.getId());
-            return ResponseEntity.ok(mapToHeadquarterResponse(foundBank, branchResponses));
-        }
-
-        return ResponseEntity.ok(mapToBranchResponse(foundBank));
+        return isHeadquarterSwiftCode(swiftCode) ? createHeadquarterResponse(foundBank) : createBranchResponse(foundBank);
     }
 
     @GetMapping("swift-codes/country/{countryISO2Code}")
     public ResponseEntity<List<BranchResponse>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
         return null;
+    }
+
+    private void validateSwiftCode(String swiftCode) {
+        if (swiftCode.length() != 11) {
+            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have 8 characters.", swiftCode));
+        }
+    }
+
+    private BankDataEntity findBankBySwiftCode(String swiftCode) {
+        BankDataEntity foundBank = bankDataMapper.selectOne(swiftCode);
+
+        if (foundBank == null) {
+            throw new SwiftCodeNotFoundException(String.format("Swift code %s not found.", swiftCode));
+        }
+
+        return foundBank;
+    }
+
+    private boolean isHeadquarterSwiftCode(String swiftCode) {
+        return swiftCode.toUpperCase()
+            .endsWith("XXX");
+    }
+
+    private ResponseEntity<?> createHeadquarterResponse(BankDataEntity foundBank) {
+        List<BranchResponse> branchResponses = getBranchResponses(foundBank.getId());
+        return ResponseEntity.ok(mapToHeadquarterResponse(foundBank, branchResponses));
+    }
+
+    private ResponseEntity<?> createBranchResponse(BankDataEntity foundBank) {
+        return ResponseEntity.ok(mapToBranchResponse(foundBank));
     }
 
     private List<BranchResponse> getBranchResponses(Integer headquarterId) {

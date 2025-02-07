@@ -19,12 +19,14 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static org.js.swiftcodes.api.AssertBankResponseUtil.assertBranchResponse;
+import static org.js.swiftcodes.api.AssertBankResponseUtil.assertHeadquarterResponse;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockitoExtension.class)
-class SwiftCodeControllerTestIT {
+class SwiftCodesControllerTestIT {
     @MockBean
     private BankDataMapper bankDataMapper;
 
@@ -45,14 +47,8 @@ class SwiftCodeControllerTestIT {
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        BranchResponse branchResponse = response.getBody();
-        Assertions.assertNotNull(branchResponse);
-        Assertions.assertEquals(expectedBranch.getSwiftCode(), branchResponse.getSwiftCode());
-        Assertions.assertEquals(expectedBranch.getAddress(), branchResponse.getAddress());
-        Assertions.assertEquals(expectedBranch.getCountryName(), branchResponse.getCountryName());
-        Assertions.assertEquals(expectedBranch.getName(), branchResponse.getBankName());
-        Assertions.assertEquals(expectedBranch.getCountryIso2Code(), branchResponse.getCountryISO2());
-        Assertions.assertFalse(branchResponse.isHeadquarter());
+
+        assertBranchResponse(expectedBranch, response);
 
         // Verify the mapper was called
         verify(bankDataMapper, times(1)).selectOne(branchSwiftCode);
@@ -76,19 +72,18 @@ class SwiftCodeControllerTestIT {
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
         HeadquarterResponse headquarterResponse = response.getBody();
-        Assertions.assertNotNull(headquarterResponse);
-        Assertions.assertEquals(expectedHeadquarter.getSwiftCode(), headquarterResponse.getSwiftCode());
-        Assertions.assertEquals(expectedHeadquarter.getAddress(), headquarterResponse.getAddress());
-        Assertions.assertEquals(expectedHeadquarter.getCountryName(), headquarterResponse.getCountryName());
-        Assertions.assertEquals(expectedHeadquarter.getName(), headquarterResponse.getBankName());
-        Assertions.assertEquals(expectedHeadquarter.getCountryIso2Code(), headquarterResponse.getCountryISO2());
-        Assertions.assertTrue(headquarterResponse.isHeadquarter());
-        Assertions.assertEquals(1,
-            headquarterResponse.getBranches()
-                .size());
+        assertHeadquarterResponse(expectedHeadquarter, headquarterResponse);
 
         List<BranchResponse> branchResponses = headquarterResponse.getBranches();
+        assertBranchResponsesList(expectedBranch, branchResponses);
+
+        // Verify the mapper was called
+        verify(bankDataMapper, times(1)).selectOne(branchSwiftCode);
+    }
+
+    private static void assertBranchResponsesList(BankDataEntity expectedBranch, List<BranchResponse> branchResponses) {
         Assertions.assertNotNull(branchResponses);
         Assertions.assertEquals(expectedBranch.getSwiftCode(),
             branchResponses.get(0)
@@ -107,8 +102,6 @@ class SwiftCodeControllerTestIT {
                 .getCountryISO2());
         Assertions.assertFalse(branchResponses.get(0)
             .isHeadquarter());
-
-        // Verify the mapper was called
-        verify(bankDataMapper, times(1)).selectOne(branchSwiftCode);
     }
+
 }
