@@ -1,10 +1,9 @@
 package org.js.swiftcodes.api.mappers;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.api.model.BranchResponse;
-import org.js.swiftcodes.api.model.HeadquarterResponse;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 
+import java.util.Collections;
 import java.util.List;
 
 public class BankDataAndResponsesMapper {
@@ -32,26 +31,30 @@ public class BankDataAndResponsesMapper {
             .build();
     }
 
-    public static HeadquarterResponse mapToHeadquarterResponse(BankDataEntity headquarter, List<BranchResponse> branchResponses) {
-        return HeadquarterResponse.builder()
-            .address(headquarter.getAddress())
-            .bankName(headquarter.getName())
-            .countryISO2(headquarter.getCountryIso2Code())
-            .countryName(headquarter.getCountryName())
-            .isHeadquarter(headquarter.isHeadquarter())
-            .swiftCode(headquarter.getSwiftCode())
-            .branches(branchResponses)
-            .build();
+    public static BankData mapToBankData(BankDataEntity bankDataEntity) {
+        List<BankDataEntity> branches = Collections.emptyList();
+        return mapToBankData(bankDataEntity, branches);
     }
 
-    public static BranchResponse mapToBranchResponse(BankDataEntity branch) {
-        return BranchResponse.builder()
-            .address(branch.getAddress())
-            .bankName(branch.getName())
-            .countryISO2(branch.getCountryIso2Code())
-            .countryName(branch.getCountryName())
-            .isHeadquarter(branch.isHeadquarter())
-            .swiftCode(branch.getSwiftCode())
+    public static BankData mapToBankData(BankDataEntity bankDataEntity, List<BankDataEntity> branches) {
+
+        BankData bankData = BankData.builder()
+            .name(bankDataEntity.getName())
+            .countryISO2Code(bankDataEntity.getCountryIso2Code())
+            .swiftCode(bankDataEntity.getSwiftCode())
+            .isHeadquarter(bankDataEntity.isHeadquarter())
+            .townName(bankDataEntity.getTownName())
+            .timeZone(bankDataEntity.getTimeZone())
+            .address(bankDataEntity.getAddress())
+            .countryName(bankDataEntity.getCountryName())
+            .codeType(bankDataEntity.getCodeType())
             .build();
+
+        for (BankDataEntity b : branches) {
+            BankData branchData = mapToBankData(b);
+            bankData.addRelatedBank(branchData);
+        }
+
+        return bankData;
     }
 }

@@ -14,9 +14,9 @@ import java.util.List;
 @ContextConfiguration(classes = { DatabaseConfig.class })
     //@ActiveProfiles("test")
 class BankDataInsertUpdateDeleteIT {
-    private static final String TEST_SWIFT_CODE_HEADQUARTER1 = "TEST1XXX";
-    private static final String TEST_SWIFT_CODE_HEADQUARTER2 = "TEST2XXX";
-    private static final String TEST_SWIFT_CODE_BRANCH_CODE = "TEST1B1C";
+    private static final String TEST_SWIFT_CODE_HEADQUARTER1 = "TEST1DDDXXX";
+    private static final String TEST_SWIFT_CODE_HEADQUARTER2 = "TEST2DDDXXX";
+    private static final String TEST_SWIFT_CODE_BRANCH_CODE = "TEST1DDDB1C";
     private static final String TEST_SWIFT_CODE_INVALID = "K";
 
     @Autowired
@@ -83,7 +83,7 @@ class BankDataInsertUpdateDeleteIT {
         Assertions.assertEquals("CHILE", fetchedBankData.getCountryName());
         Assertions.assertEquals("SANTIAGO", fetchedBankData.getTownName());
         Assertions.assertEquals("Pacific/Easter", fetchedBankData.getTimeZone());
-        Assertions.assertEquals("TEST1XXX", fetchedBankData.getSwiftCode());
+        Assertions.assertEquals(TEST_SWIFT_CODE_HEADQUARTER1, fetchedBankData.getSwiftCode());
         Assertions.assertTrue(fetchedBankData.isHeadquarter());
     }
 
