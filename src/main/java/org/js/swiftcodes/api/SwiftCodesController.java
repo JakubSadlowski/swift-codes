@@ -2,7 +2,6 @@ package org.js.swiftcodes.api;
 
 import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.api.model.BranchResponse;
 import org.js.swiftcodes.api.model.Error;
 import org.js.swiftcodes.api.validation.BadRequestException;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
@@ -35,24 +34,21 @@ public class SwiftCodesController {
     @GetMapping("swift-codes/{swift-code}")
     public ResponseEntity<BankData> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
         if (swiftCode.length() != SWIFT_CODE_LENGTH) {
-            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have 8 characters.", swiftCode));
+            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have %d characters.", swiftCode, SWIFT_CODE_LENGTH));
         }
 
         return ResponseEntity.ok(singleSwiftCodeGetService.getSwiftCode(swiftCode));
     }
 
-
     @GetMapping("swift-codes/country/{countryISO2Code}")
-    public ResponseEntity<List<BranchResponse>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
+    public ResponseEntity<List<BankData>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
         return null;
     }
 
-
-
     @ExceptionHandler(SwiftCodeNotFoundException.class)
-    public ResponseEntity<Error> handleAnimalNotFoundException(SwiftCodeNotFoundException ex, WebRequest request) {
+    public ResponseEntity<Error> handleSwiftCodeNotFoundException(SwiftCodeNotFoundException ex, WebRequest request) {
         Error response = Error.of("NOT_FOUND", ex.getMessage());
-        log.warn("Handled AnimalNotFoundException: " + ex.getMessage());
+        log.warn("Handled SwiftCodeNotFoundException: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);

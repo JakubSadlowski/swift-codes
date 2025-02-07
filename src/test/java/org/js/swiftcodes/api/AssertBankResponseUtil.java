@@ -1,8 +1,6 @@
 package org.js.swiftcodes.api;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.api.model.BranchResponse;
-import org.js.swiftcodes.api.model.HeadquarterResponse;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
 
