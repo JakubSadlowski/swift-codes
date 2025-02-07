@@ -33,7 +33,7 @@ public interface BankDataMapper {
 
     @Select("SELECT * FROM banks_data WHERE parent_id = #{parentId}")
     @ResultMap("bankDataResult")
-    List<BankDataEntity> selectAllBranches(Integer parentId);
+    List<BankDataEntity> selectAllBranches(@Param("parentId") Integer parentId);
 
     @Select("SELECT * FROM banks_data")
     @ResultMap("bankDataResult")

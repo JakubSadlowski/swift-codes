@@ -65,6 +65,18 @@ public class TestBankData {
         .timeZone("Europe/Warsaw")
         .build();
 
+    public static final BankDataEntity EXPECTED_BANK_DATA_ENTITY1 = BankDataEntity.builder()
+        .swiftCode("BCHICLRMXXX")
+        .codeType("BIC11")
+        .name("BANCO DE CHILE")
+        .address("")
+        .countryIso2Code("CL")
+        .countryName("CHILE")
+        .townName("SANTIAGO")
+        .timeZone("Pacific/Easter")
+        .isHeadquarter(true)
+        .build();
+
     public static final BankDataEntity EXPECTED_BANK_DATA_ENTITY2 = BankDataEntity.builder()
         .swiftCode("BCHICLRMEXP")
         .codeType("BIC11")
@@ -74,6 +86,7 @@ public class TestBankData {
         .countryName("CHILE")
         .townName("SANTIAGO")
         .timeZone("Pacific/Easter")
+        .parentId(EXPECTED_BANK_DATA_ENTITY1.getId())
         .build();
 
     static {

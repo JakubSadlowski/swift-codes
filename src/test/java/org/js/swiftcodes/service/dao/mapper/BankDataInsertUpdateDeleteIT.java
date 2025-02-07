@@ -14,19 +14,22 @@ import java.util.List;
 @ContextConfiguration(classes = { DatabaseConfig.class })
     //@ActiveProfiles("test")
 class BankDataInsertUpdateDeleteIT {
-    private static final String TEST_SWIFT_CODE1 = "TEST1XXX";
-    private static final String TEST_SWIFT_CODE2 = "TEST2XXX";
+    private static final String TEST_SWIFT_CODE_HEADQUARTER1 = "TEST1XXX";
+    private static final String TEST_SWIFT_CODE_HEADQUARTER2 = "TEST2XXX";
+    private static final String TEST_SWIFT_CODE_BRANCH_CODE = "TEST1B1C";
+    private static final String TEST_SWIFT_CODE_INVALID = "K";
 
     @Autowired
     private BankDataMapper bankDataMapper;
 
     @Test
     void initializeBeforeTest() {
-        bankDataMapper.deleteOne(TEST_SWIFT_CODE1);
-        bankDataMapper.deleteOne(TEST_SWIFT_CODE2);
+        bankDataMapper.deleteOne(TEST_SWIFT_CODE_BRANCH_CODE);
+        bankDataMapper.deleteOne(TEST_SWIFT_CODE_HEADQUARTER1);
+        bankDataMapper.deleteOne(TEST_SWIFT_CODE_HEADQUARTER2);
 
         BankDataEntity bankData1 = BankDataEntity.builder()
-            .swiftCode(TEST_SWIFT_CODE1)
+            .swiftCode(TEST_SWIFT_CODE_HEADQUARTER1)
             .codeType("BIC11")
             .name("TEST1")
             .address("")
@@ -39,7 +42,7 @@ class BankDataInsertUpdateDeleteIT {
         bankDataMapper.insert(bankData1);
 
         BankDataEntity bankData2 = BankDataEntity.builder()
-            .swiftCode(TEST_SWIFT_CODE2)
+            .swiftCode(TEST_SWIFT_CODE_HEADQUARTER2)
             .codeType("BIC11")
             .name("TEST2")
             .address("")
@@ -50,12 +53,26 @@ class BankDataInsertUpdateDeleteIT {
             .isHeadquarter(true)
             .build();
         bankDataMapper.insert(bankData2);
+
+        BankDataEntity bankData3 = BankDataEntity.builder()
+            .swiftCode(TEST_SWIFT_CODE_BRANCH_CODE)
+            .codeType("BIC11")
+            .name("TEST3")
+            .address("")
+            .countryIso2Code("CL")
+            .countryName("CHILE")
+            .townName("SANTIAGO")
+            .timeZone("Pacific/Easter")
+            .isHeadquarter(false)
+            .parentId(bankData1.getId())
+            .build();
+        bankDataMapper.insert(bankData3);
     }
 
     @Test
     void testSelectSingleSwiftCode() {
         // when
-        BankDataEntity fetchedBankData = bankDataMapper.selectOne(TEST_SWIFT_CODE1);
+        BankDataEntity fetchedBankData = bankDataMapper.selectOne(TEST_SWIFT_CODE_HEADQUARTER1);
 
         // then
         Assertions.assertNotNull(fetchedBankData);
@@ -71,6 +88,15 @@ class BankDataInsertUpdateDeleteIT {
     }
 
     @Test
+    void shouldReturnNull_whenSelectSingleSwiftCode() {
+        // when
+        BankDataEntity fetchedBankData = bankDataMapper.selectOne(TEST_SWIFT_CODE_INVALID);
+
+        // then
+        Assertions.assertNull(fetchedBankData);
+    }
+
+    @Test
     void testSelectAllInsertedSwiftCodes() {
         // when
         List<BankDataEntity> fetchedBankData = bankDataMapper.selectAll();
@@ -80,9 +106,19 @@ class BankDataInsertUpdateDeleteIT {
         Assertions.assertTrue(fetchedBankData.size() >= 2);
     }
 
+    @Test
+    void testSelectAllInsertedBranchesSwiftCodes() {
+        // when
+        List<BankDataEntity> fetchedBankData = bankDataMapper.selectAllBranches(bankDataMapper.selectOne(TEST_SWIFT_CODE_HEADQUARTER1).getId());
+
+        // then
+        Assertions.assertNotNull(fetchedBankData);
+        Assertions.assertFalse(fetchedBankData.isEmpty());
+    }
+
     void cleanupAfterTest() {
-        bankDataMapper.deleteOne(TEST_SWIFT_CODE1);
-        bankDataMapper.deleteOne(TEST_SWIFT_CODE2);
+        bankDataMapper.deleteOne(TEST_SWIFT_CODE_HEADQUARTER1);
+        bankDataMapper.deleteOne(TEST_SWIFT_CODE_HEADQUARTER2);
     }
 
 }
