@@ -16,6 +16,7 @@ import java.util.List;
 class BankDataInsertUpdateDeleteIT {
     private static final String TEST_SWIFT_CODE1 = "TEST1XXX";
     private static final String TEST_SWIFT_CODE2 = "TEST2XXX";
+    private static final String TEST_SWIFT_CODE_INVALID = "K";
 
     @Autowired
     private BankDataMapper bankDataMapper;
@@ -68,6 +69,15 @@ class BankDataInsertUpdateDeleteIT {
         Assertions.assertEquals("Pacific/Easter", fetchedBankData.getTimeZone());
         Assertions.assertEquals("TEST1XXX", fetchedBankData.getSwiftCode());
         Assertions.assertTrue(fetchedBankData.isHeadquarter());
+    }
+
+    @Test
+    void shouldReturnNull_whenSelectSingleSwiftCode() {
+        // when
+        BankDataEntity fetchedBankData = bankDataMapper.selectOne(TEST_SWIFT_CODE_INVALID);
+
+        // then
+        Assertions.assertNull(fetchedBankData);
     }
 
     @Test
