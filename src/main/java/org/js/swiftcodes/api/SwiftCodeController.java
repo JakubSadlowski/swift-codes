@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToBranchResponse;
@@ -61,10 +64,12 @@ public class SwiftCodeController {
     }
 
     private List<BranchResponse> getBranchResponses(Integer headquarterId) {
-        return bankDataMapper.selectAllBranches(headquarterId)
-            .stream()
-            .map(BankDataAndResponsesMapper::mapToBranchResponse)
-            .collect(Collectors.toList());
+        List<BankDataEntity> branchesFromDatabase = bankDataMapper.selectAllBranches(headquarterId);
+        List<BranchResponse> branchResponses = new ArrayList<>();
+        for (BankDataEntity bankDataEntity : branchesFromDatabase) {
+            branchResponses.add(mapToBranchResponse(bankDataEntity));
+        }
+        return branchResponses;
     }
 
     @ExceptionHandler(SwiftCodeNotFoundException.class)
