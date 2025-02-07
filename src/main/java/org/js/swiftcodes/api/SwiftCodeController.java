@@ -1,7 +1,9 @@
 package org.js.swiftcodes.api;
 
+import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper;
 import org.js.swiftcodes.api.model.BranchResponse;
+import org.js.swiftcodes.api.validation.BadRequestException;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToHead
 
 @RestController
 @RequestMapping("/v1/")
+@CommonsLog
 public class SwiftCodeController {
     private final BankDataMapper bankDataMapper;
 
@@ -29,6 +32,9 @@ public class SwiftCodeController {
 
     @GetMapping("swift-codes/{swift-code}")
     public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
+        if (swiftCode.length() != 8)
+            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have 8 characters.", swiftCode));
+
         BankDataEntity foundBank = bankDataMapper.selectOne(swiftCode);
 
         if (swiftCode.toUpperCase()

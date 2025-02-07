@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
             .body(response);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Error> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         List<String> errorMessages = new ArrayList<>();
         for (FieldError error : ex.getBindingResult()
@@ -48,6 +48,15 @@ public class GlobalExceptionHandler {
 
         Error response = Error.of("ARGUMENTS_NOT_VALID", incorrectFieldsInfo.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(response);
+    }*/
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Error> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        Error response = Error.of("BAD_REQUEST", ex.getMessage());
+        log.warn("Handled BadRequestException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(response);
     }
 }
