@@ -1,7 +1,6 @@
 package org.js.swiftcodes.service.reader;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.service.model.SwiftCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +38,7 @@ class SwiftCodesFileReaderTest {
             .readExcelContentIntoList(DUMMY_EXCEL_FILE);
 
         // When
-        Map<SwiftCode, BankData> swiftCodes = reader.readSwiftCodesFile(DUMMY_EXCEL_FILE);
+        Map<String, BankData> swiftCodes = reader.readSwiftCodesFile(DUMMY_EXCEL_FILE);
 
         // Then
         assertSwiftCode(swiftCodes, EXPECTED_BANK_DATA1, "BCHICLRMXXX");

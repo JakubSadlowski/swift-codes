@@ -3,11 +3,14 @@ package org.js.swiftcodes.api.validation;
 import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.model.Error;
 import org.js.swiftcodes.service.exceptions.GeneralException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
@@ -15,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//@ControllerAdvice
-//@Order(Ordered.HIGHEST_PRECEDENCE)
+@ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @CommonsLog
 public class GlobalExceptionHandler {
     @ExceptionHandler(GeneralException.class)
@@ -28,7 +31,7 @@ public class GlobalExceptionHandler {
             .body(response);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    /*@ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Error> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         List<String> errorMessages = new ArrayList<>();
         for (FieldError error : ex.getBindingResult()
@@ -45,6 +48,15 @@ public class GlobalExceptionHandler {
 
         Error response = Error.of("ARGUMENTS_NOT_VALID", incorrectFieldsInfo.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(response);
+    }*/
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Error> handleBadRequestException(BadRequestException ex, WebRequest request) {
+        Error response = Error.of("BAD_REQUEST", ex.getMessage());
+        log.warn("Handled BadRequestException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
             .body(response);
     }
 }

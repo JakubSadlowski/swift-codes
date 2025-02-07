@@ -36,17 +36,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SwiftCode'
+                oneOf:
+                  - $ref: '#/components/schemas/HeadquarterResponse'
+                  - $ref: '#/components/schemas/BranchResponse'
         '400':
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
-
 components:
   schemas:
-    SwiftCode:
-      required:
-        - name
+    HeadquarterResponse:
       type: object
       properties:
         address:
@@ -67,12 +66,33 @@ components:
         swiftCode:
           type: string
           example: BIGBPLPWXXX
+        branches:
+          type: array
+          items:
+            $ref: '#/components/schemas/BranchResponse'
       xml:
-        name: swiftCode
-  requestBodies:
-    SwiftCode:
-      description: SWIFT Code of given bank
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/SwiftCode'
+        name: headquarterResponse
+
+    BranchResponse:
+      type: object
+      properties:
+        address:
+          type: string
+          example: BRANCH LOCATION UL. EXAMPLE STREET 10 WARSAW, MAZOWIECKIE, 02-590
+        bankName:
+          type: string
+          example: BANK MILLENNIUM S.A.
+        countryISO2:
+          type: string
+          example: PL
+        countryName:
+          type: string
+          example: POLAND
+        isHeadquarter:
+          type: boolean
+          example: false
+        swiftCode:
+          type: string
+          example: BIGBPLPWB1C
+      xml:
+        name: branchResponse

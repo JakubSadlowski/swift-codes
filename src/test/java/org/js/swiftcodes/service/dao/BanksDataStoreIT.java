@@ -41,22 +41,35 @@ class BanksDataStoreIT {
         Assertions.assertEquals(3, bankDataEntities.size());
         BankDataEntity resultBankData1 = bankDataEntities.get(0);
         BankDataEntity resultBankData2 = bankDataEntities.get(1);
+        BankDataEntity resultBankData3 = bankDataEntities.get(2);
+        Assertions.assertTrue(resultBankData3.isHeadquarter());
         Assertions.assertTrue(resultBankData1.isHeadquarter());
         Assertions.assertFalse(resultBankData2.isHeadquarter());
         Assertions.assertEquals(resultBankData2.getParentId(), resultBankData1.getId());
-        BankDataEntity resultBankData3 = bankDataEntities.get(2);
-        // TODO: test me further
+
+        assertEqualsBankData(TestBankData.EXPECTED_BANK_DATA1, resultBankData1);
+        assertEqualsBankData(TestBankData.EXPECTED_BANK_DATA2, resultBankData2);
+        assertEqualsBankData(TestBankData.EXPECTED_BANK_DATA3, resultBankData3);
+    }
+
+    private static void assertEqualsBankData(BankData expectedBankData, BankDataEntity resultBankData) {
+        Assertions.assertEquals(expectedBankData.getSwiftCode(), resultBankData.getSwiftCode());
+        Assertions.assertEquals(expectedBankData.getName(), resultBankData.getName());
+        Assertions.assertEquals(expectedBankData.getAddress(), resultBankData.getAddress());
+        Assertions.assertEquals(expectedBankData.getCodeType(), resultBankData.getCodeType());
+        Assertions.assertEquals(expectedBankData.getCountryName(), resultBankData.getCountryName());
+        Assertions.assertEquals(expectedBankData.getTownName(), resultBankData.getTownName());
+        Assertions.assertEquals(expectedBankData.getTimeZone(), resultBankData.getTimeZone());
+        Assertions.assertEquals(expectedBankData.getCountryISO2Code(), resultBankData.getCountryIso2Code());
     }
 
     @AfterEach
     void cleanupAfterTest() {
         for (BankData bankData : getBanks(false)) {
-            bankDataMapper.deleteOne(bankData.getSwiftCode()
-                .code());
+            bankDataMapper.deleteOne(bankData.getSwiftCode());
         }
         for (BankData bankData : getBanks(true)) {
-            bankDataMapper.deleteOne(bankData.getSwiftCode()
-                .code());
+            bankDataMapper.deleteOne(bankData.getSwiftCode());
         }
     }
 

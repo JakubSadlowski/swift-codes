@@ -6,9 +6,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.service.model.SwiftCode;
+import org.js.swiftcodes.service.exceptions.GeneralException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,16 +25,16 @@ public class SwiftCodesFileReader {
         return new SwiftCodesFileReader();
     }
 
-    public Map<SwiftCode, BankData> readSwiftCodesFile(String fileName) {
-        Map<SwiftCode, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
+    public Map<String, BankData> readSwiftCodesFile(String fileName) {
+        Map<String, BankData> bankDataMap = getSwiftCodeBankDataWithNotAssignedHeadquarters(fileName);
         detectHeadquarters(bankDataMap);
         assignBranchesToHeadquarters(bankDataMap);
 
         return bankDataMap;
     }
 
-    private Map<SwiftCode, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {
-        Map<SwiftCode, BankData> bankDataMap = new HashMap<>();
+    private Map<String, BankData> getSwiftCodeBankDataWithNotAssignedHeadquarters(String fileName) {
+        Map<String, BankData> bankDataMap = new HashMap<>();
 
         Map<HeaderColumnName, Integer> headers = null;
 
@@ -51,10 +50,9 @@ public class SwiftCodesFileReader {
         return bankDataMap;
     }
 
-    private static void detectHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+    private static void detectHeadquarters(Map<String, BankData> bankDataMap) {
         for (BankData data : bankDataMap.values()) {
-            String code = data.getSwiftCode()
-                .code();
+            String code = data.getSwiftCode();
 
             if (code.toUpperCase()
                 .endsWith(HEADQUARTER_SUFFIX)) {
@@ -63,13 +61,12 @@ public class SwiftCodesFileReader {
         }
     }
 
-    private static void assignBranchesToHeadquarters(Map<SwiftCode, BankData> bankDataMap) {
+    private static void assignBranchesToHeadquarters(Map<String, BankData> bankDataMap) {
         Map<String, BankData> headquartersMap = getHeadquartersMap(bankDataMap);
 
         for (BankData data : bankDataMap.values()) {
             if (!data.isHeadquarter()) {
-                String code = data.getSwiftCode()
-                    .code();
+                String code = data.getSwiftCode();
                 String hqCode = getHqCode(code);
                 BankData hq = headquartersMap.get(hqCode);
 
@@ -84,12 +81,11 @@ public class SwiftCodesFileReader {
         return code.substring(0, code.length() - HEADQUARTER_SUFFIX.length());
     }
 
-    private static Map<String, BankData> getHeadquartersMap(Map<SwiftCode, BankData> bankDataMap) {
+    private static Map<String, BankData> getHeadquartersMap(Map<String, BankData> bankDataMap) {
         Map<String, BankData> headquartersMap = new HashMap<>();
         for (BankData bankData : bankDataMap.values()) {
             if (bankData.isHeadquarter()) {
-                String code = bankData.getSwiftCode()
-                    .code();
+                String code = bankData.getSwiftCode();
                 String hqCode = getHqCode(code);
                 headquartersMap.put(hqCode, bankData);
             }
@@ -103,7 +99,7 @@ public class SwiftCodesFileReader {
 
     private static BankData readData(List<String> row, Map<HeaderColumnName, Integer> headers) {
         return BankData.builder()
-            .swiftCode(new SwiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE)))
+            .swiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE))
             .address(getStringCellValue(row, headers, HeaderColumnName.ADDRESS))
             .codeType(getStringCellValue(row, headers, HeaderColumnName.CODE_TYPE))
             .countryISO2Code(getStringCellValueUpperCase(row, headers, HeaderColumnName.COUNTRY_ISO2CODE))

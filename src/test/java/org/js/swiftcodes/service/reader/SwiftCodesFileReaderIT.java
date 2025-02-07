@@ -2,7 +2,6 @@ package org.js.swiftcodes.service.reader;
 
 import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.service.model.SwiftCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +19,7 @@ class SwiftCodesFileReaderIT {
     @Test
     void readSwiftCodesFile_Data_Read_Correctly() {
         // When
-        Map<SwiftCode, BankData> swiftCodes = SwiftCodesFileReader.newInstance()
+        Map<String, BankData> swiftCodes = SwiftCodesFileReader.newInstance()
             .readSwiftCodesFile("src/test/resources/test_swift_codes.xlsx");
 
         // Then

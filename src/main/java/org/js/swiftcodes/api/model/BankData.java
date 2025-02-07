@@ -2,7 +2,6 @@ package org.js.swiftcodes.api.model;
 
 import lombok.Builder;
 import lombok.Data;
-import org.js.swiftcodes.service.model.SwiftCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class BankData {
-    private final SwiftCode swiftCode;
+    private final String swiftCode;
     private final String codeType;
     private final String countryISO2Code;
     private final String name;
