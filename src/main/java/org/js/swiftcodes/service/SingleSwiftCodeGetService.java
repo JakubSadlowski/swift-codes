@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
-import static org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper.mapToBankData;
+import static org.js.swiftcodes.api.mappers.BankDataAndEntityMapper.mapToBankData;
 
 @Service
 public class SingleSwiftCodeGetService {

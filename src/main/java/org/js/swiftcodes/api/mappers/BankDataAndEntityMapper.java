@@ -6,8 +6,8 @@ import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import java.util.Collections;
 import java.util.List;
 
-public class BankDataAndResponsesMapper {
-    private BankDataAndResponsesMapper() {
+public class BankDataAndEntityMapper {
+    private BankDataAndEntityMapper() {
 
     }
 

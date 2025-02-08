@@ -2,6 +2,7 @@ package org.js.swiftcodes.service.dao.entity;
 
 import lombok.Builder;
 import lombok.Data;
+import org.js.swiftcodes.service.util.SwiftCodeUtil;
 
 @Data
 @Builder
@@ -18,7 +19,8 @@ public class BankDataEntity {
     private final String timeZone;
     private Integer parentId;
 
-    public String getHeadquarterSwiftCode() {
-        return swiftCode.substring(0, 7);
+    public String getHeadquarterBaseSwiftCode() {
+        return SwiftCodeUtil.getHeadquarterBIC(swiftCode);
     }
+
 }
