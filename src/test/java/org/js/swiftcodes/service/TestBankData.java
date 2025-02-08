@@ -89,6 +89,19 @@ public class TestBankData {
         .parentId(EXPECTED_BANK_DATA_ENTITY1.getId())
         .build();
 
+    public static final BankDataEntity EXPECTED_BANK_DATA_ENTITY3 = BankDataEntity.builder()
+        .swiftCode("BCECCLRRXXX")
+        .codeType("BIC11")
+        .name("BANCO CENTRAL DE CHILE")
+        .address("")
+        .countryIso2Code("CL")
+        .countryName("CHILE")
+        .townName("SANTIAGO")
+        .timeZone("Pacific/Easter")
+        .parentId(null)
+        .isHeadquarter(true)
+        .build();
+
     static {
         EXPECTED_BANK_DATA1.addBranch(EXPECTED_BANK_DATA2);
         EXPECTED_BANK_DATA4.addBranch(EXPECTED_BANK_DATA5);
