@@ -34,9 +34,9 @@ public class DeleteSwiftCodeService {
         BankDataEntity fetchedBankData = bankDataMapper.selectOne(swiftCode);
 
         SwiftCodeUtil.validateSwiftCode(swiftCode);
-        if (Objects.isNull(bankName)) {
+        if (isBlank(bankName)) {
             throw new BadRequestException("Provided bank name mustn't be empty.");
-        } else if (Objects.isNull(countryISO2)) {
+        } else if (isBlank(countryISO2)) {
             throw new BadRequestException("Provided country ISO2 mustn't be empty.");
         } else if (fetchedBankData == null) {
             throw new SwiftCodeNotFoundException(String.format("Swift code %s not found in database.", swiftCode));
@@ -45,5 +45,9 @@ public class DeleteSwiftCodeService {
                 fetchedBankData.getName(),
                 fetchedBankData.getCountryIso2Code()));
         }
+    }
+
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
     }
 }
