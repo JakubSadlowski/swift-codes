@@ -14,7 +14,6 @@ servers:
 tags:
   - name: swift-codes
     description: Everything about bank SWIFT codes
-
 paths:
   /v1/swift-codes/{swift-code}:
     get:
@@ -22,7 +21,7 @@ paths:
         - swift-codes
       summary: Find single SWIFT code
       description: Returns a single bank SWIFT code
-      operationId: getPetById
+      operationId: getSwiftCode
       parameters:
         - name: swift-code
           in: path
@@ -36,63 +35,179 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/HeadquarterResponse'
-                  - $ref: '#/components/schemas/BranchResponse'
+                $ref: '#/components/schemas/BankData'
+              examples:
+                headquarter:
+                  summary: Example of headquarter data
+                  value:
+                    address: "HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593"
+                    bankName: "BANK MILLENNIUM S.A."
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    isHeadquarter: true
+                    swiftCode: "BIGBPLPWXXX"
+                    branches:
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        countryName: "POLAND"
+                        isHeadquarter: false
+                        swiftCode: "BIGBPLPW001"
+                branch:
+                  summary: Example of branch data
+                  value:
+                    address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                    bankName: "BANK MILLENNIUM S.A."
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    isHeadquarter: false
+                    swiftCode: "BIGBPLPW001"
         '400':
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
+    delete:
+      tags:
+        - swift-codes
+      summary: Deletes a SWIFT code
+      description: Deletes swift-code data if swiftCode, bankName and countryISO2 matches the one in the database.
+      operationId: deleteSwiftCode
+      parameters:
+        - name: swift-code
+          in: path
+          description: SWIFT code of an existing bank
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "SWIFT code deleted successfully"
+        '400':
+          description: Invalid SWIFT code provided
+        '404':
+          description: SWIFT code not found
+  /v1/swift-codes/country/{countryISO2code}:
+    get:
+      tags:
+        - swift-codes
+      summary: Find all SWIFT codes by given country ISO2 code
+      description: Returns a single bank SWIFT code
+      operationId: getCountryISO2Code
+      parameters:
+        - name: countryISO2code
+          in: path
+          description: Country ISO2 code of all related banks
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankData'
+              examples:
+                bank:
+                  summary: Example of banks data by given ISO2 code
+                  value:
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    swiftCodes:
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        isHeadquarter: false
+                        swiftCode: "BIGBPLPW001"
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-510"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        isHeadquarter: true
+                        swiftCode: "BIGBPLPWXXX"
+        '400':
+          description: Invalid country ISO2 code supplied
+        '404':
+          description: Country ISO2 code not found
+  /v1/swift-codes/:
+    post:
+      tags:
+        - swift-codes
+      summary: Add a new SWIFT code to the database
+      description: Adds new SWIFT code entries to the database for a specific country
+      operationId: addSwiftCode
+      requestBody:
+        description: Create a new SWIFT code
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                bankName:
+                  type: string
+                  example: "BANK MILLENNIUM S.A."
+                countryISO2:
+                  type: string
+                  example: "PL"
+                countryName:
+                  type: string
+                  example: "POLAND"
+                isHeadquarter:
+                  type: boolean
+                  example: true
+                swiftCode:
+                  type: string
+                  example: "BIGBPLPWXXX"
+      responses:
+        '201':
+          description: Successfully added new bank SWIFT code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "SWIFT code added successfully"
+        '400':
+          description: Invalid input
 components:
   schemas:
-    HeadquarterResponse:
+    BankData:
       type: object
       properties:
         address:
           type: string
-          example: HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593
+          example: "HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593"
         bankName:
           type: string
-          example: BANK MILLENNIUM S.A.
+          example: "BANK MILLENNIUM S.A."
         countryISO2:
           type: string
-          example: PL
+          example: "PL"
         countryName:
           type: string
-          example: POLAND
+          example: "POLAND"
         isHeadquarter:
           type: boolean
           example: true
         swiftCode:
           type: string
-          example: BIGBPLPWXXX
+          example: "BIGBPLPWXXX"
         branches:
           type: array
           items:
-            $ref: '#/components/schemas/BranchResponse'
+            $ref: '#/components/schemas/BankData'
       xml:
-        name: headquarterResponse
-
-    BranchResponse:
-      type: object
-      properties:
-        address:
-          type: string
-          example: BRANCH LOCATION UL. EXAMPLE STREET 10 WARSAW, MAZOWIECKIE, 02-590
-        bankName:
-          type: string
-          example: BANK MILLENNIUM S.A.
-        countryISO2:
-          type: string
-          example: PL
-        countryName:
-          type: string
-          example: POLAND
-        isHeadquarter:
-          type: boolean
-          example: false
-        swiftCode:
-          type: string
-          example: BIGBPLPWB1C
-      xml:
-        name: branchResponse
+        name: bankData

@@ -19,9 +19,9 @@ public class BankDataAndEntityMapper {
         return BankDataEntity.builder()
             .id(id)
             .address(bankData.getAddress())
-            .name(bankData.getName())
+            .name(bankData.getBankName())
             .codeType(bankData.getCodeType())
-            .countryIso2Code(bankData.getCountryISO2Code())
+            .countryIso2Code(bankData.getCountryISO2())
             .countryName(bankData.getCountryName())
             .swiftCode(bankData.getSwiftCode())
             .isHeadquarter(bankData.isHeadquarter())
@@ -39,20 +39,20 @@ public class BankDataAndEntityMapper {
     public static BankData mapToBankData(BankDataEntity bankDataEntity, List<BankDataEntity> branches) {
 
         BankData bankData = BankData.builder()
-            .name(bankDataEntity.getName())
-            .countryISO2Code(bankDataEntity.getCountryIso2Code())
+            .bankName(bankDataEntity.getName())
+            .countryISO2(bankDataEntity.getCountryIso2Code())
             .swiftCode(bankDataEntity.getSwiftCode())
             .isHeadquarter(bankDataEntity.isHeadquarter())
-            .townName(bankDataEntity.getTownName())
-            .timeZone(bankDataEntity.getTimeZone())
+            //.townName(bankDataEntity.getTownName())
+            //.timeZone(bankDataEntity.getTimeZone())
             .address(bankDataEntity.getAddress())
             .countryName(bankDataEntity.getCountryName())
-            .codeType(bankDataEntity.getCodeType())
+            //.codeType(bankDataEntity.getCodeType())
             .build();
 
         for (BankDataEntity b : branches) {
             BankData branchData = mapToBankData(b);
-            bankData.addRelatedBank(branchData);
+            bankData.addBranch(branchData);
         }
 
         return bankData;

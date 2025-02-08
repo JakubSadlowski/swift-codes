@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS banks_data (
     country_name VARCHAR(255) NOT NULL,
     time_zone VARCHAR(100) NOT NULL,
     parent_id INTEGER,
-    FOREIGN KEY (parent_id) REFERENCES banks_data(id)
+    FOREIGN KEY (parent_id) REFERENCES banks_data(id) ON DELETE CASCADE
 );
 
 CREATE INDEX banks_data_parent_id_key ON banks_data (parent_id);

@@ -1,5 +1,6 @@
 package org.js.swiftcodes.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import org.js.swiftcodes.service.exceptions.GeneralException;
@@ -10,19 +11,20 @@ import java.util.List;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BankData {
     private final String swiftCode;
     private final String codeType;
-    private final String countryISO2Code;
-    private final String name;
+    private final String countryISO2;
+    private final String bankName;
     private final String address;
     private final String townName;
     private final String countryName;
     private final String timeZone;
     private boolean isHeadquarter;
-    private final List<BankData> relatedBanks = new ArrayList<>();
+    private final List<BankData> branches = new ArrayList<>();
 
-    public void addRelatedBank(BankData relatedBank) {
+    public void addBranch(BankData relatedBank) {
         if (!isHeadquarter) {
             throw new GeneralException("Adding branch is only allowed for headquarter banks.");
         } else if (isRelatedBankSwiftCodeMatchingWithHeadquarterSwiftCode(relatedBank)) {
@@ -31,7 +33,7 @@ public class BankData {
                 this.getSwiftCode()));
         }
 
-        relatedBanks.add(relatedBank);
+        branches.add(relatedBank);
     }
 
     private String getHeadquarterBaseSwiftCode() {

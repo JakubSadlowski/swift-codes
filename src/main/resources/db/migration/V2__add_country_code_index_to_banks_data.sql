@@ -1,0 +1,1 @@
+CREATE INDEX banks_data_country_iso2_code_key ON banks_data (country_iso2_code);

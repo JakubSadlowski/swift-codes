@@ -22,24 +22,24 @@ public class SingleSwiftCodeGetService {
     }
 
     public BankData getSwiftCode(String swiftCode) {
-        BankDataEntity foundBank = findBankBySwiftCode(swiftCode);
+        BankDataEntity fetchedBankData = findBankBySwiftCode(swiftCode);
 
-        if (foundBank.isHeadquarter()) {
-            List<BankDataEntity> branches = getBranches(foundBank);
-            return mapToBankData(foundBank, branches);
+        if (fetchedBankData.isHeadquarter()) {
+            List<BankDataEntity> branches = getBranches(fetchedBankData);
+            return mapToBankData(fetchedBankData, branches);
         } else {
-            return mapToBankData(foundBank);
+            return mapToBankData(fetchedBankData);
         }
     }
 
     private BankDataEntity findBankBySwiftCode(String swiftCode) {
-        BankDataEntity foundBank = bankDataMapper.selectOne(swiftCode);
+        BankDataEntity fetchedBankData = bankDataMapper.selectOne(swiftCode);
 
-        if (foundBank == null) {
+        if (fetchedBankData == null) {
             throw new SwiftCodeNotFoundException(String.format("Swift code %s not found.", swiftCode));
         }
 
-        return foundBank;
+        return fetchedBankData;
     }
 
     private List<BankDataEntity> getBranches(BankDataEntity foundBank) {

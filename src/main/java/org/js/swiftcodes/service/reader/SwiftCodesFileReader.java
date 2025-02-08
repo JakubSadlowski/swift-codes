@@ -71,7 +71,7 @@ public class SwiftCodesFileReader {
                 BankData hq = headquartersMap.get(hqCode);
 
                 if (hq != null) {
-                    hq.addRelatedBank(data);
+                    hq.addBranch(data);
                 }
             }
         }
@@ -102,9 +102,9 @@ public class SwiftCodesFileReader {
             .swiftCode(getStringCellValue(row, headers, HeaderColumnName.SWIFT_CODE))
             .address(getStringCellValue(row, headers, HeaderColumnName.ADDRESS))
             .codeType(getStringCellValue(row, headers, HeaderColumnName.CODE_TYPE))
-            .countryISO2Code(getStringCellValueUpperCase(row, headers, HeaderColumnName.COUNTRY_ISO2CODE))
+            .countryISO2(getStringCellValueUpperCase(row, headers, HeaderColumnName.COUNTRY_ISO2CODE))
             .countryName(getStringCellValueUpperCase(row, headers, HeaderColumnName.COUNTRY_NAME))
-            .name(getStringCellValue(row, headers, HeaderColumnName.NAME))
+            .bankName(getStringCellValue(row, headers, HeaderColumnName.NAME))
             .townName(getStringCellValue(row, headers, HeaderColumnName.TOWN_NAME))
             .timeZone(getStringCellValue(row, headers, HeaderColumnName.TIME_ZONE))
             .build();

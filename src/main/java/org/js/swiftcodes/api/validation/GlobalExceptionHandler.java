@@ -8,15 +8,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -31,26 +25,6 @@ public class GlobalExceptionHandler {
             .body(response);
     }
 
-    /*@ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Error> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
-        List<String> errorMessages = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult()
-            .getFieldErrors()) {
-            errorMessages.add(error.getField() + "=" + error.getDefaultMessage());
-        }
-        Collections.sort(errorMessages);
-        StringBuilder incorrectFieldsInfo = new StringBuilder();
-        for (String errorMessage : errorMessages) {
-            if (!incorrectFieldsInfo.isEmpty())
-                incorrectFieldsInfo.append(", ");
-            incorrectFieldsInfo.append(errorMessage);
-        }
-
-        Error response = Error.of("ARGUMENTS_NOT_VALID", incorrectFieldsInfo.toString());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(response);
-    }*/
-
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Error> handleBadRequestException(BadRequestException ex, WebRequest request) {
         Error response = Error.of("BAD_REQUEST", ex.getMessage());
@@ -59,4 +33,5 @@ public class GlobalExceptionHandler {
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
     }
+
 }
