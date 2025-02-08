@@ -170,8 +170,8 @@ paths:
                   type: string
                   example: "BIGBPLPWXXX"
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Successfully added new bank SWIFT code
           content:
             application/json:
               schema:

@@ -3,11 +3,11 @@ package org.js.swiftcodes.api;
 import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.api.model.Error;
-import org.js.swiftcodes.api.validation.BadRequestException;
 import org.js.swiftcodes.service.DeleteSwiftCodeService;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
 import org.js.swiftcodes.service.exceptions.SwiftCodeInvalidException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeNotFoundException;
+import org.js.swiftcodes.service.util.SwiftCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,6 @@ import java.util.Map;
 public class SwiftCodesController {
     private final SingleSwiftCodeGetService singleSwiftCodeGetService;
     private final DeleteSwiftCodeService deleteSwiftCodeService;
-    private static final int SWIFT_CODE_LENGTH = 11;
 
     @Autowired
     public SwiftCodesController(SingleSwiftCodeGetService singleSwiftCodeGetService, DeleteSwiftCodeService deleteSwiftCodeService) {
@@ -41,10 +39,7 @@ public class SwiftCodesController {
 
     @GetMapping("swift-codes/{swift-code}")
     public ResponseEntity<BankData> getSwiftCode(@PathVariable("swift-code") String swiftCode) {
-        if (swiftCode.length() != SWIFT_CODE_LENGTH) {
-            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have %d characters.", swiftCode, SWIFT_CODE_LENGTH));
-        }
-
+        SwiftCodeUtil.validateSwiftCode(swiftCode);
         return ResponseEntity.ok(singleSwiftCodeGetService.getSwiftCode(swiftCode));
     }
 
@@ -55,17 +50,15 @@ public class SwiftCodesController {
 
     @DeleteMapping("swift-codes/{swift-code}")
     public ResponseEntity<Map<String, String>> deleteSwiftCode(@PathVariable("swift-code") String swiftCode, @RequestParam String bankName, @RequestParam String countryISO2Code) {
-        if (swiftCode.length() != SWIFT_CODE_LENGTH) {
-            throw new BadRequestException(String.format("Parameter swiftCode %s is invalid. SWIFT Code can't be empty and must have %d characters.", swiftCode, SWIFT_CODE_LENGTH));
-        }
-
         int deletedCount = deleteSwiftCodeService.deleteSwiftCode(swiftCode, bankName, countryISO2Code);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", String.format("Successfully deleted %d record with SWIFT code: %s", deletedCount, swiftCode));
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+            .body(Map.of("message", String.format("Successfully deleted %d record with SWIFT code: %s", deletedCount, swiftCode)));
     }
+
+    /*@PostMapping("swift-codes/")
+    public ResponseEntity<Map<String, String>> addSwiftCode() {
+        return
+    }*/
 
     @ExceptionHandler(SwiftCodeNotFoundException.class)
     public ResponseEntity<Error> handleSwiftCodeNotFoundException(SwiftCodeNotFoundException ex, WebRequest request) {
