@@ -108,6 +108,52 @@ paths:
           description: Invalid country ISO2 code supplied
         '404':
           description: Country ISO2 code not found
+  /v1/swift-codes/:
+    post:
+      tags:
+        - swift-codes
+      summary: Add a new SWIFT code to the database
+      description: Adds new SWIFT code entries to the database for a specific country
+      operationId: addSwiftCode
+      requestBody:
+        description: Create a new SWIFT code
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                bankName:
+                  type: string
+                  example: "BANK MILLENNIUM S.A."
+                countryISO2:
+                  type: string
+                  example: "PL"
+                countryName:
+                  type: string
+                  example: "POLAND"
+                isHeadquarter:
+                  type: boolean
+                  example: true
+                swiftCode:
+                  type: string
+                  example: "BIGBPLPWXXX"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "SWIFT code added successfully"
+        '400':
+          description: Invalid input
 components:
   schemas:
     BankData:
