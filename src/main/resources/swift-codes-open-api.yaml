@@ -1,10 +1,19 @@
 openapi: 3.0.3
 info:
   title: SWIFT Codes OpenAPI
-  description: This is the API for operating on bank swift codes.
+  description: |-
+    This is the API for operating on bank swift codes.
   contact:
     email: sadlowski.jakub.work@gmail.com
   version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://localhost:8080/
+tags:
+  - name: swift-codes
+    description: Everything about bank SWIFT codes
 paths:
   /v1/swift-codes/{swift-code}:
     get:
@@ -57,6 +66,48 @@ paths:
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
+  /v1/swift-codes/country/{countryISO2code}:
+    get:
+      tags:
+        - swift-codes
+      summary: Find all SWIFT codes by given country ISO2 code
+      description: Returns a single bank SWIFT code
+      operationId: getCountryISO2Code
+      parameters:
+        - name: countryISO2code
+          in: path
+          description: Country ISO2 code of all related banks
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankData'
+              examples:
+                bank:
+                  summary: Example of banks data by given ISO2 code
+                  value:
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    swiftCodes:
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        isHeadquarter: false
+                        swiftCode: "BIGBPLPW001"
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-510"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        isHeadquarter: true
+                        swiftCode: "BIGBPLPWXXX"
+        '400':
+          description: Invalid country ISO2 code supplied
+        '404':
+          description: Country ISO2 code not found
 components:
   schemas:
     BankData:

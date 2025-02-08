@@ -40,8 +40,8 @@ public class SwiftCodesController {
         return ResponseEntity.ok(singleSwiftCodeGetService.getSwiftCode(swiftCode));
     }
 
-    @GetMapping("swift-codes/country/{countryISO2Code}")
-    public ResponseEntity<List<BankData>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2Code") String countryISO2Code) {
+    @GetMapping("swift-codes/country/{countryISO2code}")
+    public ResponseEntity<List<BankData>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2code") String countryISO2Code) {
         return null;
     }
 
