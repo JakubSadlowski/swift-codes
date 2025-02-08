@@ -5,6 +5,7 @@ import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.api.validation.BadRequestException;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
+import org.js.swiftcodes.service.util.SwiftCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,13 @@ public class GetBanksDataByCountryCodeService {
                 banksResult.add(bankData);
                 currentHeadquarter = bankData;
             } else if (currentHeadquarter != null) {
-                currentHeadquarter.addBranch(bankData);
+                String headquarterBIC = SwiftCodeUtil.getHeadquarterBIC(currentHeadquarter.getSwiftCode());
+                String branchHeadquarterBIC = SwiftCodeUtil.getHeadquarterBIC(bankData.getSwiftCode());
+                if (headquarterBIC.equals(branchHeadquarterBIC)) {
+                    currentHeadquarter.addBranch(bankData);
+                } else {
+                    banksResult.add(bankData);
+                }
             } else {
                 banksResult.add(bankData);
             }
