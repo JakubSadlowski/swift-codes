@@ -1,20 +1,10 @@
 openapi: 3.0.3
 info:
   title: SWIFT Codes OpenAPI
-  description: |-
-    This is the API for operating on bank swift codes.
+  description: This is the API for operating on bank swift codes.
   contact:
     email: sadlowski.jakub.work@gmail.com
   version: 1.0.11
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
-servers:
-  - url: https://localhost:8080/
-tags:
-  - name: swift-codes
-    description: Everything about bank SWIFT codes
-
 paths:
   /v1/swift-codes/{swift-code}:
     get:
@@ -22,7 +12,7 @@ paths:
         - swift-codes
       summary: Find single SWIFT code
       description: Returns a single bank SWIFT code
-      operationId: getPetById
+      operationId: getSwiftCode
       parameters:
         - name: swift-code
           in: path
@@ -36,63 +26,63 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/HeadquarterResponse'
-                  - $ref: '#/components/schemas/BranchResponse'
+                $ref: '#/components/schemas/BankData'
+              examples:
+                headquarter:
+                  summary: Example of headquarter data
+                  value:
+                    address: "HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593"
+                    bankName: "BANK MILLENNIUM S.A."
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    isHeadquarter: true
+                    swiftCode: "BIGBPLPWXXX"
+                    branches:
+                      - address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                        bankName: "BANK MILLENNIUM S.A."
+                        countryISO2: "PL"
+                        countryName: "POLAND"
+                        isHeadquarter: false
+                        swiftCode: "BIGBPLPW001"
+                branch:
+                  summary: Example of branch data
+                  value:
+                    address: "UL. PULAWSKA 15, WARSZAWA, 02-515"
+                    bankName: "BANK MILLENNIUM S.A."
+                    countryISO2: "PL"
+                    countryName: "POLAND"
+                    isHeadquarter: false
+                    swiftCode: "BIGBPLPW001"
         '400':
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
 components:
   schemas:
-    HeadquarterResponse:
+    BankData:
       type: object
       properties:
         address:
           type: string
-          example: HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593
+          example: "HARMONY CENTER UL. STANISLAWA ZARYNA 2A WARSZAWA, MAZOWIECKIE, 02-593"
         bankName:
           type: string
-          example: BANK MILLENNIUM S.A.
+          example: "BANK MILLENNIUM S.A."
         countryISO2:
           type: string
-          example: PL
+          example: "PL"
         countryName:
           type: string
-          example: POLAND
+          example: "POLAND"
         isHeadquarter:
           type: boolean
           example: true
         swiftCode:
           type: string
-          example: BIGBPLPWXXX
+          example: "BIGBPLPWXXX"
         branches:
           type: array
           items:
-            $ref: '#/components/schemas/BranchResponse'
+            $ref: '#/components/schemas/BankData'
       xml:
-        name: headquarterResponse
-
-    BranchResponse:
-      type: object
-      properties:
-        address:
-          type: string
-          example: BRANCH LOCATION UL. EXAMPLE STREET 10 WARSAW, MAZOWIECKIE, 02-590
-        bankName:
-          type: string
-          example: BANK MILLENNIUM S.A.
-        countryISO2:
-          type: string
-          example: PL
-        countryName:
-          type: string
-          example: POLAND
-        isHeadquarter:
-          type: boolean
-          example: false
-        swiftCode:
-          type: string
-          example: BIGBPLPWB1C
-      xml:
-        name: branchResponse
+        name: bankData
