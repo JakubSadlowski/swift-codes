@@ -90,7 +90,7 @@ public class TestBankData {
         .build();
 
     static {
-        EXPECTED_BANK_DATA1.addRelatedBank(EXPECTED_BANK_DATA2);
-        EXPECTED_BANK_DATA4.addRelatedBank(EXPECTED_BANK_DATA5);
+        EXPECTED_BANK_DATA1.addBranch(EXPECTED_BANK_DATA2);
+        EXPECTED_BANK_DATA4.addBranch(EXPECTED_BANK_DATA5);
     }
 }

@@ -20,9 +20,9 @@ public class BankData {
     private final String countryName;
     private final String timeZone;
     private boolean isHeadquarter;
-    private final List<BankData> relatedBanks = new ArrayList<>();
+    private final List<BankData> branches = new ArrayList<>();
 
-    public void addRelatedBank(BankData relatedBank) {
+    public void addBranch(BankData relatedBank) {
         if (!isHeadquarter) {
             throw new GeneralException("Adding branch is only allowed for headquarter banks.");
         } else if (isRelatedBankSwiftCodeMatchingWithHeadquarterSwiftCode(relatedBank)) {
@@ -31,7 +31,7 @@ public class BankData {
                 this.getSwiftCode()));
         }
 
-        relatedBanks.add(relatedBank);
+        branches.add(relatedBank);
     }
 
     private String getHeadquarterBaseSwiftCode() {

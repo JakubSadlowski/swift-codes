@@ -52,7 +52,7 @@ public class BankDataAndEntityMapper {
 
         for (BankDataEntity b : branches) {
             BankData branchData = mapToBankData(b);
-            bankData.addRelatedBank(branchData);
+            bankData.addBranch(branchData);
         }
 
         return bankData;

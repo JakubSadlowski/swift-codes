@@ -71,7 +71,7 @@ public class SwiftCodesFileReader {
                 BankData hq = headquartersMap.get(hqCode);
 
                 if (hq != null) {
-                    hq.addRelatedBank(data);
+                    hq.addBranch(data);
                 }
             }
         }

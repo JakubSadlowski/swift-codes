@@ -74,7 +74,7 @@ class SwiftCodesControllerTestIT {
         BankData headquarterResponse = response.getBody();
         assertHeadquarterResponse(expectedHeadquarter, headquarterResponse);
 
-        List<BankData> branchResponses = headquarterResponse.getRelatedBanks();
+        List<BankData> branchResponses = headquarterResponse.getBranches();
         assertBranchResponsesList(expectedBranch, branchResponses);
 
         // Verify the mapper was called

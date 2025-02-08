@@ -25,7 +25,7 @@ public class AssertBankResponseUtil {
         Assertions.assertEquals(expectedHeadquarter.getCountryISO2Code(), headquarterResponse.getCountryISO2Code());
         Assertions.assertTrue(headquarterResponse.isHeadquarter());
         Assertions.assertEquals(1,
-            headquarterResponse.getRelatedBanks()
+            headquarterResponse.getBranches()
                 .size());
     }
 }
