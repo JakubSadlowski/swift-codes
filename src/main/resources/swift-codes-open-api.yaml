@@ -66,6 +66,32 @@ paths:
           description: Invalid SWIFT code supplied
         '404':
           description: SWIFT code not found
+    delete:
+      tags:
+        - swift-codes
+      summary: Deletes a SWIFT code
+      description: Deletes swift-code data if swiftCode, bankName and countryISO2 matches the one in the database.
+      operationId: deleteSwiftCode
+      parameters:
+        - name: swift-code
+          in: path
+          description: SWIFT code of an existing bank
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "SWIFT code deleted successfully"
+        '400':
+          description: Invalid pet value
   /v1/swift-codes/country/{countryISO2code}:
     get:
       tags:
