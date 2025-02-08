@@ -1,7 +1,7 @@
 package org.js.swiftcodes.service.dao;
 
 import org.js.swiftcodes.api.model.BankData;
-import org.js.swiftcodes.config.DatabaseConfig;
+import org.js.swiftcodes.config.BuiltinDbConfig;
 import org.js.swiftcodes.service.TestBankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
@@ -11,13 +11,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-@ContextConfiguration(classes = { DatabaseConfig.class })
+@ContextConfiguration(classes = { BuiltinDbConfig.class })
+@ActiveProfiles("test")
 class BanksDataStoreIT {
 
     @Autowired

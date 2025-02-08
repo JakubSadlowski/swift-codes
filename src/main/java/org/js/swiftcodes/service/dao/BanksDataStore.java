@@ -9,6 +9,7 @@ import org.js.swiftcodes.service.exceptions.GeneralException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,18 +23,24 @@ public class BanksDataStore {
         this.bankDataMapper = bankDataMapper;
     }
 
+    public boolean isBanksDataEmpty() {
+        return this.bankDataMapper.selectAll()
+            .isEmpty();
+    }
+
     public List<BankDataEntity> insertList(@Param("swiftCodes") List<BankData> bankDataList) {
         // note those entities do not have id and parentID assigned, this will be done after db insert of headquarters
         List<BankDataEntity> bankDataEntities = mapToBankDataEntities(bankDataList);
 
-        Map<String, BankDataEntity> headquarters = firstInsertHeadquarters(bankDataEntities);
+        // read data
+        Map<String, BankDataEntity> headquarters = getHeadquartersGroupedByBaseHqSwiftCode(bankDataEntities);
         List<BankDataEntity> branches = getBranches(bankDataEntities);
 
-        for (BankDataEntity branch : branches) {
-            String hqSwiftCode = branch.getHeadquarterSwiftCode();
-            mapParentIdIfBranchMatchesWithHq(branch, headquarters, hqSwiftCode);
-            bankDataMapper.insert(branch);
-        }
+        validateDataBeforeStore(bankDataList, headquarters.values(), branches);
+
+        // store data
+        insertHeadquarters(headquarters.values());
+        insertBranches(branches, headquarters);
 
         return bankDataEntities;
     }
@@ -46,11 +53,10 @@ public class BanksDataStore {
         return resultList;
     }
 
-    private static void mapParentIdIfBranchMatchesWithHq(BankDataEntity branch, Map<String, BankDataEntity> headquarters, String hqSwiftCode) {
-        BankDataEntity headquarter = headquarters.get(hqSwiftCode);
-        if (headquarter != null) {
-            branch.setParentId(headquarter.getId());
-        }
+    private static Map<String, BankDataEntity> getHeadquartersGroupedByBaseHqSwiftCode(List<BankDataEntity> bankDataList) {
+        return bankDataList.stream()
+            .filter(BankDataEntity::isHeadquarter)
+            .collect(Collectors.toMap(BankDataEntity::getHeadquarterBaseSwiftCode, Function.identity(), ((existing, replacement) -> replacement)));
     }
 
     private static List<BankDataEntity> getBranches(List<BankDataEntity> swiftCodes) {
@@ -59,16 +65,33 @@ public class BanksDataStore {
             .toList();
     }
 
-    private Map<String, BankDataEntity> firstInsertHeadquarters(List<BankDataEntity> swiftCodes) {
-        Map<String, BankDataEntity> headquarters = swiftCodes.stream()
-            .filter(BankDataEntity::isHeadquarter)
-            .collect(Collectors.toMap(BankDataEntity::getHeadquarterSwiftCode, Function.identity(), (key1, key2) -> {
-                throw new GeneralException(String.format("duplicate key value found %s", key1));
-            }));
-        for (BankDataEntity bankDataEntity : headquarters.values()) {
+    private static void validateDataBeforeStore(Collection<BankData> bankDataList,
+        Collection<BankDataEntity> headquarters,
+        Collection<BankDataEntity> branches) {
+        if (headquarters.size() + branches.size() != bankDataList.size()) {
+            throw new GeneralException("Number of headquarters and branches does not match with the input.");
+        }
+    }
+
+    private void insertHeadquarters(Collection<BankDataEntity> headquarters) {
+        for (BankDataEntity bankDataEntity : headquarters) {
             bankDataMapper.insert(bankDataEntity);
         }
-
-        return headquarters;
     }
+
+    private void insertBranches(List<BankDataEntity> branches, Map<String, BankDataEntity> headquarters) {
+        for (BankDataEntity branch : branches) {
+            String hqSwiftCode = branch.getHeadquarterBaseSwiftCode();
+            mapParentIdIfBranchMatchesWithHq(branch, headquarters, hqSwiftCode);
+            bankDataMapper.insert(branch);
+        }
+    }
+
+    private static void mapParentIdIfBranchMatchesWithHq(BankDataEntity branch, Map<String, BankDataEntity> headquarters, String hqSwiftCode) {
+        BankDataEntity headquarter = headquarters.get(hqSwiftCode);
+        if (headquarter != null) {
+            branch.setParentId(headquarter.getId());
+        }
+    }
+
 }
