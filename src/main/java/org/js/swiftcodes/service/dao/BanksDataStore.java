@@ -1,7 +1,7 @@
 package org.js.swiftcodes.service.dao;
 
 import org.apache.ibatis.annotations.Param;
-import org.js.swiftcodes.api.mappers.BankDataAndResponsesMapper;
+import org.js.swiftcodes.api.mappers.BankDataAndEntityMapper;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
@@ -48,7 +48,7 @@ public class BanksDataStore {
     private List<BankDataEntity> mapToBankDataEntities(List<BankData> bankDataList) {
         List<BankDataEntity> resultList = new ArrayList<>(bankDataList.size());
         for (BankData bankData : bankDataList) {
-            resultList.add(BankDataAndResponsesMapper.mapToBankDataEntity(bankData));
+            resultList.add(BankDataAndEntityMapper.mapToBankDataEntity(bankData));
         }
         return resultList;
     }
