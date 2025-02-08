@@ -91,7 +91,9 @@ paths:
                     type: string
                     example: "SWIFT code deleted successfully"
         '400':
-          description: Invalid pet value
+          description: Invalid SWIFT code provided
+        '404':
+          description: SWIFT code not found
   /v1/swift-codes/country/{countryISO2code}:
     get:
       tags:
