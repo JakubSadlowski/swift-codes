@@ -1,5 +1,6 @@
 package org.js.swiftcodes.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 import org.js.swiftcodes.service.exceptions.GeneralException;
@@ -10,11 +11,12 @@ import java.util.List;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BankData {
     private final String swiftCode;
     private final String codeType;
-    private final String countryISO2Code;
-    private final String name;
+    private final String countryISO2;
+    private final String bankName;
     private final String address;
     private final String townName;
     private final String countryName;

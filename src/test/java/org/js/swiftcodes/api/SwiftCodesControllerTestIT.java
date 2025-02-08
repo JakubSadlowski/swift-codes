@@ -87,8 +87,8 @@ class SwiftCodesControllerTestIT {
         Assertions.assertEquals(expectedBranch.getSwiftCode(), branch.getSwiftCode());
         Assertions.assertEquals(expectedBranch.getAddress(), branch.getAddress());
         Assertions.assertEquals(expectedBranch.getCountryName(), branch.getCountryName());
-        Assertions.assertEquals(expectedBranch.getName(), branch.getName());
-        Assertions.assertEquals(expectedBranch.getCountryISO2Code(), branch.getCountryISO2Code());
+        Assertions.assertEquals(expectedBranch.getBankName(), branch.getBankName());
+        Assertions.assertEquals(expectedBranch.getCountryISO2(), branch.getCountryISO2());
         Assertions.assertFalse(branch.isHeadquarter());
     }
 

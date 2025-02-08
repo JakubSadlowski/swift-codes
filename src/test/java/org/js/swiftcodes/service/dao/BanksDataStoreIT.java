@@ -56,13 +56,13 @@ class BanksDataStoreIT {
 
     private static void assertEqualsBankData(BankData expectedBankData, BankDataEntity resultBankData) {
         Assertions.assertEquals(expectedBankData.getSwiftCode(), resultBankData.getSwiftCode());
-        Assertions.assertEquals(expectedBankData.getName(), resultBankData.getName());
+        Assertions.assertEquals(expectedBankData.getBankName(), resultBankData.getName());
         Assertions.assertEquals(expectedBankData.getAddress(), resultBankData.getAddress());
         Assertions.assertEquals(expectedBankData.getCodeType(), resultBankData.getCodeType());
         Assertions.assertEquals(expectedBankData.getCountryName(), resultBankData.getCountryName());
         Assertions.assertEquals(expectedBankData.getTownName(), resultBankData.getTownName());
         Assertions.assertEquals(expectedBankData.getTimeZone(), resultBankData.getTimeZone());
-        Assertions.assertEquals(expectedBankData.getCountryISO2Code(), resultBankData.getCountryIso2Code());
+        Assertions.assertEquals(expectedBankData.getCountryISO2(), resultBankData.getCountryIso2Code());
     }
 
     @AfterEach

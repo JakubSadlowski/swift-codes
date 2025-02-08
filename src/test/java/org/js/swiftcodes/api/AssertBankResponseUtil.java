@@ -11,8 +11,8 @@ public class AssertBankResponseUtil {
         Assertions.assertEquals(expectedBranch.getSwiftCode(), branchResponse.getSwiftCode());
         Assertions.assertEquals(expectedBranch.getAddress(), branchResponse.getAddress());
         Assertions.assertEquals(expectedBranch.getCountryName(), branchResponse.getCountryName());
-        Assertions.assertEquals(expectedBranch.getName(), branchResponse.getName());
-        Assertions.assertEquals(expectedBranch.getCountryISO2Code(), branchResponse.getCountryISO2Code());
+        Assertions.assertEquals(expectedBranch.getBankName(), branchResponse.getBankName());
+        Assertions.assertEquals(expectedBranch.getCountryISO2(), branchResponse.getCountryISO2());
         Assertions.assertFalse(branchResponse.isHeadquarter());
     }
 
@@ -21,8 +21,8 @@ public class AssertBankResponseUtil {
         Assertions.assertEquals(expectedHeadquarter.getSwiftCode(), headquarterResponse.getSwiftCode());
         Assertions.assertEquals(expectedHeadquarter.getAddress(), headquarterResponse.getAddress());
         Assertions.assertEquals(expectedHeadquarter.getCountryName(), headquarterResponse.getCountryName());
-        Assertions.assertEquals(expectedHeadquarter.getName(), headquarterResponse.getName());
-        Assertions.assertEquals(expectedHeadquarter.getCountryISO2Code(), headquarterResponse.getCountryISO2Code());
+        Assertions.assertEquals(expectedHeadquarter.getBankName(), headquarterResponse.getBankName());
+        Assertions.assertEquals(expectedHeadquarter.getCountryISO2(), headquarterResponse.getCountryISO2());
         Assertions.assertTrue(headquarterResponse.isHeadquarter());
         Assertions.assertEquals(1,
             headquarterResponse.getBranches()
