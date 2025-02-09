@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.js.swiftcodes.api.AssertBankResponseUtil.assertBranchResponse;
 import static org.js.swiftcodes.api.AssertBankResponseUtil.assertHeadquarterResponse;
@@ -41,7 +42,7 @@ class SwiftCodesControllerTestIT {
             .thenReturn(null);
 
         // when
-        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/wrong", HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/" + swiftCode, HttpMethod.GET, null, String.class);
 
         // then
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -71,7 +72,7 @@ class SwiftCodesControllerTestIT {
         BankData expectedBranch = TestBankData.EXPECTED_BANK_DATA2;
 
         // when
-        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMEXP", BankData.class);
+        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/" + branchSwiftCode, BankData.class);
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -96,7 +97,7 @@ class SwiftCodesControllerTestIT {
         BankData expectedBranch = TestBankData.EXPECTED_BANK_DATA2;
 
         // when
-        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/BCHICLRMXXX", BankData.class);
+        ResponseEntity<BankData> response = restTemplate.getForEntity("/v1/swift-codes/" + branchSwiftCode, BankData.class);
 
         // then
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -120,7 +121,7 @@ class SwiftCodesControllerTestIT {
             .thenReturn(List.of(TestBankData.EXPECTED_BANK_DATA_ENTITY1, TestBankData.EXPECTED_BANK_DATA_ENTITY2, TestBankData.EXPECTED_BANK_DATA_ENTITY3));
 
         // when
-        ResponseEntity<List<BankData>> response = restTemplate.exchange("/v1/swift-codes/country/CL", HttpMethod.GET, null, new ParameterizedTypeReference<List<BankData>>() {
+        ResponseEntity<List<BankData>> response = restTemplate.exchange("/v1/swift-codes/country/" + countryISO2, HttpMethod.GET, null, new ParameterizedTypeReference<List<BankData>>() {
         });
 
         // then
@@ -147,7 +148,7 @@ class SwiftCodesControllerTestIT {
             .thenReturn(List.of(TestBankData.EXPECTED_BANK_DATA_ENTITY1));
 
         // when
-        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/HJK", HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/" + countryISO2, HttpMethod.GET, null, String.class);
 
         // then
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -162,13 +163,42 @@ class SwiftCodesControllerTestIT {
             .thenReturn(List.of());
 
         // when
-        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/HJ", HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/" + countryISO2, HttpMethod.GET, null, String.class);
 
         // then
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
+    @Test
+    void shouldDeleteBank_whenCorrectParametersAreProvided() {
+        // given
+        String swiftCode = "BCHICLRMEXP";
+        String bankName = "BANCO DE CHILE";
+        String countryISO2 = "CL";
 
+        Mockito.when(bankDataMapper.selectOne(swiftCode))
+            .thenReturn(TestBankData.EXPECTED_BANK_DATA_ENTITY2)
+            .thenReturn(null);
+
+        Mockito.when(bankDataMapper.deleteOne(swiftCode))
+            .thenReturn(1);
+
+        // when
+        String url = String.format("/v1/swift-codes/%s?bankName=%s&countryISO2Code=%s", swiftCode, bankName, countryISO2);
+
+        ResponseEntity<Map<String, String>> response = restTemplate.exchange(url, HttpMethod.DELETE, null, new ParameterizedTypeReference<Map<String, String>>() {
+        });
+
+        // then
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertEquals(String.format("Successfully deleted 1 record with SWIFT code: %s", swiftCode),
+            response.getBody()
+                .get("message"));
+
+        Mockito.verify(bankDataMapper, Mockito.times(1))
+            .deleteOne(swiftCode);
+    }
 
     private static void assertBranchResponsesList(BankData expectedBranch, List<BankData> branchResponses) {
         Assertions.assertNotNull(branchResponses);
