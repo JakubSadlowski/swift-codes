@@ -6,6 +6,7 @@ import org.js.swiftcodes.api.model.Error;
 import org.js.swiftcodes.service.DeleteSwiftCodeService;
 import org.js.swiftcodes.service.GetBanksDataByCountryCodeService;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
+import org.js.swiftcodes.service.exceptions.SwiftCodeAlreadyExistException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeInvalidException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeNotFoundException;
 import org.js.swiftcodes.service.util.SwiftCodeUtil;
@@ -76,6 +77,15 @@ public class SwiftCodesController {
     public ResponseEntity<Error> handleInvalidSwiftCodeException(Exception ex, WebRequest request) {
         Error response = Error.of("INVALID_INPUT", ex.getMessage());
         log.warn("Handled SwiftCodeInvalidException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(response);
+    }
+
+    @ExceptionHandler(SwiftCodeAlreadyExistException.class)
+    public ResponseEntity<Error> handleSwiftCodeAlreadyExistException(Exception ex, WebRequest request) {
+        Error response = Error.of("ALREADY_EXIST", ex.getMessage());
+        log.warn("Handled SwiftCodeAlreadyExistException: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
