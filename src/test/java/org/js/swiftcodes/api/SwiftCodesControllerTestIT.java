@@ -35,6 +35,11 @@ class SwiftCodesControllerTestIT {
 
     @Test
     void shouldReturnBadRequest_whenIncorrectSwiftCodeIsProvided() {
+        // given
+        String swiftCode = "wrong";
+        Mockito.when(bankDataMapper.selectOne(swiftCode))
+            .thenReturn(null);
+
         // when
         ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/wrong", HttpMethod.GET, null, String.class);
 
@@ -44,6 +49,11 @@ class SwiftCodesControllerTestIT {
 
     @Test
     void shouldReturnBadRequest_whenEmptySwiftCodeIsProvided() {
+        // given
+        String swiftCode = "";
+        Mockito.when(bankDataMapper.selectOne(swiftCode))
+            .thenReturn(null);
+
         // when
         ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/''", HttpMethod.GET, null, String.class);
 
@@ -142,6 +152,23 @@ class SwiftCodesControllerTestIT {
         // then
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    void shouldReturnNotFound_whenNonExistingInDatabaseCountryISO2CodeIsProvided() {
+        // given
+        String countryISO2 = "HJ";
+
+        Mockito.when(bankDataMapper.selectBankDataByCountryISO2Code(countryISO2))
+            .thenReturn(List.of());
+
+        // when
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/HJ", HttpMethod.GET, null, String.class);
+
+        // then
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+
 
     private static void assertBranchResponsesList(BankData expectedBranch, List<BankData> branchResponses) {
         Assertions.assertNotNull(branchResponses);

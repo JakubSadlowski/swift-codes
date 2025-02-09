@@ -7,6 +7,7 @@ import org.js.swiftcodes.service.AddOneSwiftCodeService;
 import org.js.swiftcodes.service.DeleteSwiftCodeService;
 import org.js.swiftcodes.service.GetBanksDataByCountryCodeService;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
+import org.js.swiftcodes.service.exceptions.CountryISO2CodeNotFoundException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeAlreadyExistException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeInvalidException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeNotFoundException;
@@ -111,6 +112,15 @@ public class SwiftCodesController {
         Error response = Error.of("ALREADY_EXIST", ex.getMessage());
         log.warn("Handled SwiftCodeAlreadyExistException: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(response);
+    }
+
+    @ExceptionHandler(CountryISO2CodeNotFoundException.class)
+    public ResponseEntity<Error> handleCountryISO2CodeNotFoundException(Exception ex, WebRequest request) {
+        Error response = Error.of("NOT_FOUND", ex.getMessage());
+        log.warn("Handled CountryISO2CodeNotFoundException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
     }

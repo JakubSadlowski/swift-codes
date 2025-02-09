@@ -5,6 +5,7 @@ import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.api.validation.BadRequestException;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 import org.js.swiftcodes.service.dao.mapper.BankDataMapper;
+import org.js.swiftcodes.service.exceptions.CountryISO2CodeNotFoundException;
 import org.js.swiftcodes.service.util.SwiftCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,12 @@ public class GetBanksDataByCountryCodeService {
         if (!isValidCountryCode(countryCodeISO2)) {
             throw new BadRequestException(String.format("Provided country code %s is not valid", countryCodeISO2));
         }
+
         List<BankDataEntity> banksDataEntities = bankDataMapper.selectBankDataByCountryISO2Code(countryCodeISO2.toUpperCase());
+
+        if (banksDataEntities == null || banksDataEntities.isEmpty()) {
+            throw new CountryISO2CodeNotFoundException(String.format("Provided country code %s not found in database.", countryCodeISO2));
+        }
         return convertToBanksData(banksDataEntities);
     }
 
