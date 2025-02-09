@@ -34,6 +34,24 @@ class SwiftCodesControllerTestIT {
     private TestRestTemplate restTemplate;
 
     @Test
+    void shouldReturnBadRequest_whenIncorrectSwiftCodeIsProvided() {
+        // when
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/wrong", HttpMethod.GET, null, String.class);
+
+        // then
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenEmptySwiftCodeIsProvided() {
+        // when
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/''", HttpMethod.GET, null, String.class);
+
+        // then
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
     void shouldReturnBranch_whenCorrectBranchSwiftCodeIsProvided() {
         // given
         String branchSwiftCode = "BCHICLRMEXP";
