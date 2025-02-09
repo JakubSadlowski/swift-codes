@@ -4,6 +4,7 @@ import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.api.model.Error;
 import org.js.swiftcodes.service.DeleteSwiftCodeService;
+import org.js.swiftcodes.service.GetBanksDataByCountryCodeService;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
 import org.js.swiftcodes.service.exceptions.SwiftCodeInvalidException;
 import org.js.swiftcodes.service.exceptions.SwiftCodeNotFoundException;
@@ -30,11 +31,13 @@ import java.util.Map;
 public class SwiftCodesController {
     private final SingleSwiftCodeGetService singleSwiftCodeGetService;
     private final DeleteSwiftCodeService deleteSwiftCodeService;
+    private final GetBanksDataByCountryCodeService getBanksDataByCountryCodeService;
 
     @Autowired
-    public SwiftCodesController(SingleSwiftCodeGetService singleSwiftCodeGetService, DeleteSwiftCodeService deleteSwiftCodeService) {
+    public SwiftCodesController(SingleSwiftCodeGetService singleSwiftCodeGetService, DeleteSwiftCodeService deleteSwiftCodeService, GetBanksDataByCountryCodeService getBanksDataByCountryCodeService) {
         this.singleSwiftCodeGetService = singleSwiftCodeGetService;
         this.deleteSwiftCodeService = deleteSwiftCodeService;
+        this.getBanksDataByCountryCodeService = getBanksDataByCountryCodeService;
     }
 
     @GetMapping("swift-codes/{swift-code}")
@@ -45,7 +48,7 @@ public class SwiftCodesController {
 
     @GetMapping("swift-codes/country/{countryISO2code}")
     public ResponseEntity<List<BankData>> getAllSwiftCodesForSpecificCountry(@PathVariable("countryISO2code") String countryISO2Code) {
-        return null;
+        return ResponseEntity.ok(getBanksDataByCountryCodeService.getBanksData(countryISO2Code));
     }
 
     @DeleteMapping("swift-codes/{swift-code}")

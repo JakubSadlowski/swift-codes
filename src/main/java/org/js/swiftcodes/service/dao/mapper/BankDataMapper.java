@@ -52,11 +52,11 @@ public interface BankDataMapper {
     int deleteOne(String swiftCode);
 
     @Select("""
-        select swift_code, country_iso2_code, is_headquarter, name, code_type, address, town_name, country_name, time_zone, parent_id
+        select *
           from banks_data
          where country_iso2_code = #{countryIso2Code}
          order by substring(swift_code from '.{8}'), is_headquarter desc
         """)
     @ResultMap("bankDataResult")
-    List<BankDataEntity> selectBankDataByCountryISO2Code(String countryIso2Code);
+    List<BankDataEntity> selectBankDataByCountryISO2Code(@Param("countryIso2Code") String countryIso2Code);
 }
