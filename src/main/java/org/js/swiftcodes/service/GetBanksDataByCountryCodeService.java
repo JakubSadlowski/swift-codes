@@ -26,7 +26,7 @@ public class GetBanksDataByCountryCodeService {
         if (!isValidCountryCode(countryCodeISO2)) {
             throw new BadRequestException(String.format("Provided country code %s is not valid", countryCodeISO2));
         }
-        List<BankDataEntity> banksDataEntities = bankDataMapper.selectBankDataByCountryISO2Code(countryCodeISO2);
+        List<BankDataEntity> banksDataEntities = bankDataMapper.selectBankDataByCountryISO2Code(countryCodeISO2.toUpperCase());
         return convertToBanksData(banksDataEntities);
     }
 

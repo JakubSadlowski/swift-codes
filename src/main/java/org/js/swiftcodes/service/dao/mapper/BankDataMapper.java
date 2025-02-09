@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 import org.js.swiftcodes.service.dao.entity.BankDataEntity;
 
@@ -52,11 +53,37 @@ public interface BankDataMapper {
     int deleteOne(String swiftCode);
 
     @Select("""
-        select swift_code, country_iso2_code, is_headquarter, name, code_type, address, town_name, country_name, time_zone, parent_id
-          from banks_data
-         where country_iso2_code = #{countryIso2Code}
-         order by substring(swift_code from '.{8}'), is_headquarter desc
+        SELECT *
+          FROM banks_data
+         WHERE country_iso2_code = #{countryIso2Code}
+         OREDR BY SUBSTRING(swift_code FROM '.{8}'), is_headquarter DESC
         """)
     @ResultMap("bankDataResult")
-    List<BankDataEntity> selectBankDataByCountryISO2Code(String countryIso2Code);
+    List<BankDataEntity> selectBankDataByCountryISO2Code(@Param("countryIso2Code") String countryIso2Code);
+
+    @Select("""
+            SELECT id 
+            FROM banks_data
+            WHERE LEFT(swift_code, 8) = LEFT(#{swiftCode}, 8)
+            AND swift_code LIKE '%XXX'
+            LIMIT 1
+        """)
+    Integer selectHeadquartersId(@Param("swiftCode") String swiftCode);
+
+    @Update("""
+            UPDATE banks_data 
+            SET parent_id = #{parentId}
+            WHERE LEFT(swift_code, 8) = LEFT(#{swiftCode}, 8)
+            AND swift_code NOT LIKE '%XXX'
+        """)
+    int updateBranchParentId(@Param("swiftCode") String swiftCode, @Param("parentId") Integer parentId);
+
+    @Select("""
+            SELECT swift_code 
+            FROM banks_data
+            WHERE LEFT(swift_code, 8) = LEFT(#{swiftCode}, 8)
+            AND swift_code LIKE '%XXX'
+            LIMIT 1
+        """)
+    String selectHeadquartersSwiftCode(@Param("swiftCode") String swiftCode);
 }

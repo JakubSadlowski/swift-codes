@@ -35,4 +35,8 @@ public class SwiftCodeUtil {
         return value == null || value.trim()
             .length() < SWIFT_CODE_HEADQUARTER_MAX_LENGTH;
     }
+
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
 }

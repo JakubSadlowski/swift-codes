@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+import static org.js.swiftcodes.service.util.SwiftCodeUtil.isBlank;
+
 @Service
 public class DeleteSwiftCodeService {
     private final BankDataMapper bankDataMapper;
@@ -45,9 +47,5 @@ public class DeleteSwiftCodeService {
                 fetchedBankData.getName(),
                 fetchedBankData.getCountryIso2Code()));
         }
-    }
-
-    public static boolean isBlank(String str) {
-        return str == null || str.trim().isEmpty();
     }
 }
