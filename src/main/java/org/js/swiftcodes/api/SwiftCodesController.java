@@ -3,6 +3,7 @@ package org.js.swiftcodes.api;
 import lombok.extern.apachecommons.CommonsLog;
 import org.js.swiftcodes.api.model.BankData;
 import org.js.swiftcodes.api.model.Error;
+import org.js.swiftcodes.service.AddOneSwiftCodeService;
 import org.js.swiftcodes.service.DeleteSwiftCodeService;
 import org.js.swiftcodes.service.GetBanksDataByCountryCodeService;
 import org.js.swiftcodes.service.SingleSwiftCodeGetService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +36,17 @@ public class SwiftCodesController {
     private final SingleSwiftCodeGetService singleSwiftCodeGetService;
     private final DeleteSwiftCodeService deleteSwiftCodeService;
     private final GetBanksDataByCountryCodeService getBanksDataByCountryCodeService;
+    private final AddOneSwiftCodeService addOneSwiftCodeService;
 
     @Autowired
-    public SwiftCodesController(SingleSwiftCodeGetService singleSwiftCodeGetService, DeleteSwiftCodeService deleteSwiftCodeService, GetBanksDataByCountryCodeService getBanksDataByCountryCodeService) {
+    public SwiftCodesController(SingleSwiftCodeGetService singleSwiftCodeGetService,
+        DeleteSwiftCodeService deleteSwiftCodeService,
+        GetBanksDataByCountryCodeService getBanksDataByCountryCodeService,
+        AddOneSwiftCodeService addOneSwiftCodeService) {
         this.singleSwiftCodeGetService = singleSwiftCodeGetService;
         this.deleteSwiftCodeService = deleteSwiftCodeService;
         this.getBanksDataByCountryCodeService = getBanksDataByCountryCodeService;
+        this.addOneSwiftCodeService = addOneSwiftCodeService;
     }
 
     @GetMapping("swift-codes/{swift-code}")
@@ -59,10 +67,26 @@ public class SwiftCodesController {
             .body(Map.of("message", String.format("Successfully deleted %d record with SWIFT code: %s", deletedCount, swiftCode)));
     }
 
-    /*@PostMapping("swift-codes/")
-    public ResponseEntity<Map<String, String>> addSwiftCode() {
-        return
-    }*/
+    @PostMapping("swift-codes/")
+    public ResponseEntity<Map<String, String>> addSwiftCode(@RequestBody BankData bankData) {
+        int insertedCount = addOneSwiftCodeService.addSwiftCode(bankData.getAddress()
+                .toUpperCase(),
+            bankData.getBankName()
+                .toUpperCase(),
+            bankData.getCountryISO2()
+                .toUpperCase(),
+            bankData.getCountryName()
+                .toUpperCase(),
+            bankData.isHeadquarter(),
+            bankData.getSwiftCode()
+                .toUpperCase());
+        return ResponseEntity.ok()
+            .body(Map.of("message",
+                String.format("Successfully added %d record with SWIFT code: %s",
+                    insertedCount,
+                    bankData.getSwiftCode()
+                        .toUpperCase())));
+    }
 
     @ExceptionHandler(SwiftCodeNotFoundException.class)
     public ResponseEntity<Error> handleSwiftCodeNotFoundException(SwiftCodeNotFoundException ex, WebRequest request) {
