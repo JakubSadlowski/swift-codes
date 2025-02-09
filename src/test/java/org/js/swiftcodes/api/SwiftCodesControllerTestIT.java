@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -79,6 +81,48 @@ class SwiftCodesControllerTestIT {
 
         // Verify the mapper was called
         verify(bankDataMapper, times(1)).selectOne(branchSwiftCode);
+    }
+
+    @Test
+    void shouldReturnListOfBanksWithGivenCountryISO2Code_whenCorrectCountryISO2CodeIsProvided() {
+        // given
+        String countryISO2 = "CL";
+
+        Mockito.when(bankDataMapper.selectBankDataByCountryISO2Code(countryISO2))
+            .thenReturn(List.of(TestBankData.EXPECTED_BANK_DATA_ENTITY1, TestBankData.EXPECTED_BANK_DATA_ENTITY2, TestBankData.EXPECTED_BANK_DATA_ENTITY3));
+
+        // when
+        ResponseEntity<List<BankData>> response = restTemplate.exchange("/v1/swift-codes/country/CL", HttpMethod.GET, null, new ParameterizedTypeReference<List<BankData>>() {
+        });
+
+        // then
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<BankData> listOfHeadquarters = response.getBody();
+        Assertions.assertNotNull(listOfHeadquarters);
+        Assertions.assertEquals(2, listOfHeadquarters.size());
+        List<BankData> listOfBranches = listOfHeadquarters.get(0)
+            .getBranches();
+        Assertions.assertNotNull(listOfBranches);
+        Assertions.assertEquals(1, listOfBranches.size());
+
+        // Verify the mapper was called
+        verify(bankDataMapper, times(1)).selectBankDataByCountryISO2Code(countryISO2);
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenIncorrectCountryISO2CodeIsProvided() {
+        // given
+        String countryISO2 = "HJK";
+
+        Mockito.when(bankDataMapper.selectBankDataByCountryISO2Code(countryISO2))
+            .thenReturn(List.of(TestBankData.EXPECTED_BANK_DATA_ENTITY1));
+
+        // when
+        ResponseEntity<String> response = restTemplate.exchange("/v1/swift-codes/country/HJK", HttpMethod.GET, null, String.class);
+
+        // then
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     private static void assertBranchResponsesList(BankData expectedBranch, List<BankData> branchResponses) {
