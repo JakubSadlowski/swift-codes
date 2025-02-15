@@ -56,7 +56,7 @@ public interface BankDataMapper {
         SELECT *
           FROM banks_data
          WHERE country_iso2_code = #{countryIso2Code}
-         OREDR BY SUBSTRING(swift_code FROM '.{8}'), is_headquarter DESC
+         ORDER BY SUBSTRING(swift_code FROM '.{8}'), is_headquarter DESC
         """)
     @ResultMap("bankDataResult")
     List<BankDataEntity> selectBankDataByCountryISO2Code(@Param("countryIso2Code") String countryIso2Code);
